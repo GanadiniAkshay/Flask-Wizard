@@ -1,0 +1,1 @@
+{"pipeline": "mitie_sklearn", "mitie_file": "./data/total_word_feature_extractor.dat", "path": "./models", "data": "./data/examples/demo-rasa.json", "active_model": "/Users/akshaykulkarni/Documents/ozz/code/flask-wizard/models/model_20170416-062932"}
