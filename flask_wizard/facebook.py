@@ -1,10 +1,12 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
+import os
 import json
 import requests
 import base64
 import sys
+import random
 
 from flask import request
 from actions import *
@@ -18,12 +20,16 @@ class FacebookHandler(object):
 
         It parses the payload and responds
     """
-    def __init__(self, pat, verify_token, model, config, actions):
+    def __init__(self, pid, pat, verify_token, model, config, actions):
+        self.pid = pid
         self.pat = pat
         self.verify_token = verify_token
         with open(actions,"r") as jsonFile:
             self.actions = json.load(jsonFile)
-        self.nlu = NLUParser(model,config)
+        if model == "":
+            self.nlu = None
+        else:
+            self.nlu = NLUParser(model,config)
 
     def verify(self,*args,**kwargs):
         if request.args.get('hub.verify_token','') == self.verify_token:
@@ -34,29 +40,52 @@ class FacebookHandler(object):
     def respond(self,*args,**kwargs):
         payload = request.get_data()
         for sender, message in self.messaging_events(payload):
-            message = message.decode('utf-8')
-            print("Incoming from %s: %s" % (sender, message))
-            intent, entities = self.nlu.parse(message)
-            if intent in self.actions:
-                session = {}
-                session['user'] = sender
-                session['intent'] = intent
-                session['entities'] = entities
-                session['message'] = message
-                session['channel'] = 'facebook' 
-                func = eval(self.actions[intent])
-                response = func(session)
-                self.send_message(self.pat,sender,response)   
+            if sender != self.pid:
+                if type(message) != str:
+                    message = message.decode('utf-8')
+                if self.nlu:
+                    intent, entities = self.nlu.parse(message)
+                    if intent in self.actions:
+                        if type(self.actions[intent]) == list:
+                            response = random.choice(self.actions[intent])
+                            self.send_message(self.pat,sender,response)
+                        else:
+                            r = requests.get("https://graph.facebook.com/v2.6/"+ sender + "?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=EAAVKqE0ZBVvwBAOPhdm2Prx0EGXEKfdUI24xBcSEOEL4q2iywYYjiBiswZB8yus4VXRwLoFgeUvOZC5ZAhd831eacsozdjBruqiBwGLVcJbNXV005tvFCs3Ay6s7IsmRIgYClHexiCYe8hC23ijV8b1CfsnIWUTapDUKKjpZBMwZDZD")
+                            r_data = json.loads(r.text)
+                            session = {}
+                            session['user'] = {
+                                'id':sender,
+                                'name':r_data['first_name'] + ' ' + r_data['last_name'],
+                                'profile_pic':r_data['profile_pic'],
+                                'locale':r_data['locale'],
+                                'timezone':r_data['timezone'],
+                                'gender':r_data['gender']
+                            }
+                            session['intent'] = intent
+                            session['entities'] = entities
+                            session['message'] = message
+                            session['channel'] = 'facebook' 
+                            func = eval(self.actions[intent])
+                            func(session)
+                else:
+                    self.send_message(self.pat, sender, message)   
         return "responded"
 
     def messaging_events(self, payload):
         data = json.loads(payload)
         messaging_events = data["entry"][0]["messaging"]
         for event in messaging_events:
-            if "message" in event and "text" in event["message"]:
-                yield event["sender"]["id"], event["message"]["text"].encode('unicode_escape')
+            if event["sender"]["id"] == self.pid:
+                continue
+            elif 'read' in event:
+                continue
+            elif 'delivery' in event:
+                continue
             else:
-                yield event["sender"]["id"], "I can't echo this"
+                if "message" in event and "text" in event["message"]:
+                    yield event["sender"]["id"], event["message"]["text"].encode('unicode_escape')
+                else:
+                    yield event["sender"]["id"], "I can't echo this"
 
     def send_message(self, token, recipient, text):
         """Send the message text to recipient with id recipient.
@@ -65,7 +94,7 @@ class FacebookHandler(object):
             message = text
         else:
             message = text.decode('unicode_escape')
-
+        
         r = requests.post("https://graph.facebook.com/v2.6/me/messages",
             params={"access_token": token},
             data=json.dumps({

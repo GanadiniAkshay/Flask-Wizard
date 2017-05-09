@@ -48,20 +48,29 @@ class Wizard(object):
         '''
         with open(self.config,"r") as jsonFile:
             data = json.load(jsonFile)
-            self.model = os.path.join(os.getcwd(),data["active_model"]).replace('./','')
-            print(self.model)
+            if "active_model" in data.keys():
+                print("Using data model " + data["active_model"])
+                self.model = data["active_model"]
+            else:
+                self.model = ""
+            self.channels = data["channels"].keys()
+            if "facebook" in self.channels:
+                self.facebook = True
+                self.facebook_verify_token = data["channels"]["facebook"]["verify_token"]
+                self.facebook_pat = data["channels"]["facebook"]["pat"]
+                self.facebook_pid = data["channels"]["facebook"]["pid"]
 
         # web initializaion
         web = HttpHandler(self.model, self.config, self.actions)
         app.add_url_rule('/api/messages/http',view_func=web.response,methods=["POST"])
 
-        # facebook initialization
-        self.verify_token = app.config.get('VERIFY_TOKEN')
-        self.pat = app.config.get('PAT')
-        fb = FacebookHandler(self.pat, self.verify_token, self.model, self.config, self.actions)
-        app.add_url_rule('/api/messages/facebook',view_func=fb.verify
-        ,methods=['GET'])
-        app.add_url_rule('/api/messages/facebook',view_func=fb.respond
-        ,methods=['POST'])
-
-        
+        #facebook initialization
+        if "facebook" in self.channels:
+            self.verify_token = self.facebook_verify_token
+            self.pat = self.facebook_pat
+            self.pid = self.facebook_pid
+            fb = FacebookHandler(self.pid, self.pat, self.verify_token, self.model, self.config, self.actions)
+            app.add_url_rule('/api/messages/facebook',view_func=fb.verify
+            ,methods=['GET'])
+            app.add_url_rule('/api/messages/facebook',view_func=fb.respond
+            ,methods=['POST'])

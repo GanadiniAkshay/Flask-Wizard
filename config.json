@@ -1,1 +1,12 @@
-{"pipeline": "mitie_sklearn", "mitie_file": "./data/total_word_feature_extractor.dat", "path": "./models", "data": "./data/examples/demo-rasa.json", "active_model": "/Users/akshaykulkarni/Documents/ozz/code/flask-wizard/models/model_20170416-062932"}
+{
+    "name": "Restaurants", 
+    "pipeline": "mitie_sklearn", 
+    "mitie_file": "./train/total_word_feature_extractor.dat", 
+    "channels": {
+                    "facebook": {
+                                    "verify_token": "this_is_the_verify_token", 
+                                    "pat": "EAADr9SgIAX4BAHEnUvkC7zGyYq2VoxVC4caukaJ7fNaWEaECsQIzecUauy6fBtbJ2JARPZAHCnpIbDz8mGGZBBrHMGZCOKCZBMrx8ILB5ZAqxEerFrfOAOhI924o9vdjC8mgkJ1nybZBZAK2BYmFDWldZAFTJNclWoxfJWRMLS5drAZDZD"
+                                }
+                },
+     "active_model": "models/model_20170507-123215"
+}

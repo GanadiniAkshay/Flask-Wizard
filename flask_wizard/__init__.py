@@ -12,3 +12,5 @@ from .core import(
 from .facebook import FacebookHandler
 from .web import HttpHandler
 from .nlu import NLUParser
+from .learn import learn
+from .response import *

@@ -1,4 +1,5 @@
 {
     "greet":"smalltalk.hey",
-    "restaurant_search":"search.results"
+    "restaurant_search":"search.results",
+    "goodbye":["bye","goodbye","Good Bye"]
 }

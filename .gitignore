@@ -1,3 +1,9 @@
 train/
 __pycache__/
 models/
+*.egg-info
+flask_wizard/__pycache__/
+flask_wizard_cli/__pycache__/
+dist/
+build/
+wiza/

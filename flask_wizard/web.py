@@ -3,6 +3,7 @@ from __future__ import print_function
 
 import json
 import requests
+import random
 
 from flask import request
 from actions import *
@@ -19,18 +20,43 @@ class HttpHandler(object):
     def __init__(self,model,config, actions):
         with open(actions,"r") as jsonFile:
             self.actions = json.load(jsonFile)
-        self.nlu = NLUParser(model,config)
+        if model == "":
+            self.nlu = None
+        else:
+            self.nlu = NLUParser(model,config)
+            print("Server running")
 
     def response(self, *args, **kwargs):
         """
           Take the message, parse it and respond
         """
         payload = request.get_data()
+        payload = payload.decode('utf-8')
         data = json.loads(payload)
-        intent, entities = self.nlu.parse(data["message"])
-        if intent in self.actions:
-            func = eval(self.actions[intent])
-            response = func()
-            return str(response)
+        message = data["message"]
+        if self.nlu:
+            intent, entities = self.nlu.parse(message)
+            if intent in self.actions:
+                if type(self.actions[intent]) == list:
+                    response = random.choice(self.actions[intent])
+                else:
+                    session = {}
+                    session['user'] = {
+                                'id':request.remote_addr,
+                                'name':'User',
+                                'profile_pic':'None',
+                                'locale':'en-US',
+                                'timezone':'0',
+                                'gender':'None'
+                            }
+                    session['intent'] = intent
+                    session['entities'] = entities
+                    session['message'] = message
+                    session['channel'] = 'web'
+                    func = eval(self.actions[intent])
+                    response = func(session)
+                return response
+            else:
+                return "Sorry, I couldn't understand that"
         else:
-            return ""
+            return str(message)
