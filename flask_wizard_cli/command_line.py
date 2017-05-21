@@ -76,6 +76,7 @@ def learn(arguments):
 
         files = os.listdir(path)
 
+        
         common_examples = []
 
         none_example_1 = {'text':'jshfjdhsfj','intent':'None','entities':[]}
@@ -83,6 +84,7 @@ def learn(arguments):
         common_examples.append(none_example_1)
         common_examples.append(none_example_2)
 
+        
         for file in files:
             file_data = file.split('.')
             intent_name = file_data[0]
@@ -91,8 +93,13 @@ def learn(arguments):
                 continue
             else:
                 with open(path + '/' + file,'r') as intentFile:
+                    responses = []
                     examples = intentFile.readlines()
-                    examples = map(lambda s: s.strip(), examples)
+                    examples = [*map(lambda s: s.strip(), examples)]
+                    if "<-responses->" in examples:
+                        pos = examples.index("<-responses->")
+                        responses = examples[pos+1:]
+                        examples = examples[:pos]
                     for sample in examples:
                         example = {}
                         sample_split = sample.split('<=>')
@@ -143,7 +150,14 @@ def learn(arguments):
                             example['entities'] = entities
 
                         common_examples.append(example)
-
+                    if len(responses) > 0:
+                           with open(os.path.join(os.getcwd(),"actions.json"),"r+") as jsonFile:
+                               data = json.load(jsonFile)
+                               data[intent_name] = responses
+                               jsonFile.seek(0)
+                               jsonFile.truncate()
+                               json.dump(data, jsonFile)
+        
         nlp_json = {"rasa_nlu_data":{"common_examples":common_examples}}
 
         with open(os.path.join(path, 'train.json'),"w") as trainFile:
