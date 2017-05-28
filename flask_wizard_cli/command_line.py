@@ -245,10 +245,16 @@ def init(arguments):
     #Download mitie file
     print("Setting up Mitie model file...")
     print("Installing Mitie")
-    if sys.version_info >= (3,0):
-        call(["pip3","install","git+https://github.com/mit-nlp/MITIE.git#egg=mitie"])
-    else:
+
+    if os.name == 'nt':
+        #windows operating system
         call(["pip","install","git+https://github.com/mit-nlp/MITIE.git#egg=mitie"])
+    else:
+        #linux, unix or macos
+        if sys.version_info >= (3,0):
+            call(["pip3","install","git+https://github.com/mit-nlp/MITIE.git#egg=mitie"])
+        else:
+            call(["pip","install","git+https://github.com/mit-nlp/MITIE.git#egg=mitie"])
     print("Choose one of the options below")
     print("1. Download Mitie models (size>400MB, so if you already have the total_word_feature_extractor.dat file use it. You can find it in the train folder if you already set up wiz before")
     print("2. Copy from existing path")
@@ -281,17 +287,27 @@ def init(arguments):
     
     #Download en model for spacy
     print("Setting up spacy")
-    if sys.version_info >= (3,0):
-        call(["python3","-m","spacy","download","en"])
-    else:
+    if os.name == 'nt':
+        #windows operating system
         call(["python","-m","spacy","download","en"])
+    else:
+        #linux, unix, macos
+        if sys.version_info >= (3,0):
+            call(["python3","-m","spacy","download","en"])
+        else:
+            call(["python","-m","spacy","download","en"])
 
 def run(arguments):
     main_path = os.path.join(os.getcwd(),'main.py')
-    if sys.version_info >= (3,0):
-        call(["python3","main.py"])
-    else:
+    if os.name == 'nt':
+        #windows operating system
         call(["python","main.py"])
+    else:
+        #linux, unix, macos operating system
+        if sys.version_info >= (3,0):
+            call(["python3","main.py"])
+        else:
+            call(["python","main.py"])
 
 def download(arguments):
     directory_path = os.path.join(os.getcwd(),'train')
