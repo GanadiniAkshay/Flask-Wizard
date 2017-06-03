@@ -2,9 +2,14 @@ from __future__ import absolute_import
 from __future__ import print_function
 
 import os
+import json
 
-from rasa_nlu.config import RasaNLUConfig
-from rasa_nlu.model import Metadata, Interpreter
+config = os.path.join(os.getcwd(),'config.json')
+with open(config,"r") as jsonFile:
+            data = json.load(jsonFile)
+            if data["nlp"] == "rasa":
+                from rasa_nlu.config import RasaNLUConfig
+                from rasa_nlu.model import Metadata, Interpreter
 
 class NLUParser(object):
     def __init__(self, model, config):
@@ -21,6 +26,6 @@ class NLUParser(object):
         else:
             intent = parsed_data['intent']['name']
         entities = parsed_data['entities']
-        #print(intent,entities)
+        print(intent,entities)
         return intent,entities
     

@@ -49,7 +49,7 @@ class Wizard(object):
         with open(self.config,"r") as jsonFile:
             data = json.load(jsonFile)
             if "active_model" in data.keys():
-                print("Using data model " + data["active_model"])
+                print("Using the data model at " + data["active_model"])
                 self.model = data["active_model"]
             else:
                 self.model = ""

@@ -8,12 +8,13 @@ import urllib
 import tarfile
 import wget
 import shutil
+import getpass
+import requests
+import time
+import jwt
 
 from subprocess import call
 
-from rasa_nlu.converters import load_data
-from rasa_nlu.config import RasaNLUConfig
-from rasa_nlu.model import Trainer
 
 def main():
     arguments = sys.argv
@@ -55,6 +56,13 @@ def build(arguments):
     file.close()
 
 def learn(arguments):
+    config = os.path.join(os.getcwd(),'config.json')
+    with open(config,"r") as jsonFile:
+                data = json.load(jsonFile)
+                if data["nlp"] == "rasa":
+                    from rasa_nlu.converters import load_data
+                    from rasa_nlu.config import RasaNLUConfig
+                    from rasa_nlu.model import Trainer
     path = os.path.join(os.getcwd(), 'train')
     if (os.path.isdir(path)):
         ac_path = os.path.join(os.getcwd(),'actions')
@@ -185,13 +193,57 @@ def init(arguments):
     #Setup bot name
     main_name = os.getcwd().split(os.sep)[-1]
     if len(arguments) < 3:
-        prompt = "What is the name of the bot? (default: " + main_name + "):"
+        prompt = "Name of the bot (default: " + main_name + "):"
         bot_name = str(input(prompt))
         if len(bot_name) == 0:
             bot_name = main_name
     else:
         bot_name = ' '.join(arguments[2:])
-    print("Creating bot: " + bot_name)
+
+    #Setup Author Name
+    prompt = "Name of the author:"
+    user_name = str(input(prompt))
+    if len(user_name) == 0:
+        user_name = "wizard_user"
+
+    #Ask if ozz account
+    print("Your ozz account is used for accessing the GUI admin panel")
+    print("The admin panel lets you add/remove channels, access analytics and other services")
+    answer = str(input("Do you have an account on Ozz.ai?[Y/N]:"))
+
+    answer = answer.lower()
+
+    if answer == 'y' or answer == 'yes' or answer == 'yeah' or answer == 'yup':
+        email = str(input("Email:"))
+        password = str(input("Password:"))
+    else:
+        #Setup Email
+        prompt = "Email for admin panel:"
+        email = str(input(prompt))
+        #Setup Password
+        prompt = "Password for admin panel (typing hidden):"
+        password = str(getpass.getpass(prompt))
+
+        url = "https://api.ozz.ai/users"
+        headers = {
+        'content-type': "application/json",
+        'cache-control': "no-cache"
+        }
+        payload = {
+            "name":user_name,
+            "email":email,
+            "password":password
+        }
+        print("Setting up admin account....")
+        response = requests.request("POST", url, data=json.dumps(payload), headers=headers)
+
+        response_token = json.loads(response.text)['token']
+        super_secret = "hdh%&D*%^^%$8767VHGSDFT5$%SD$658"
+
+        data = jwt.decode(response_token,super_secret,algorithms=['HS256'])
+
+        user_id = data["id"]
+
 
     #Setup actions folder
     print("Creating actions folder....")
@@ -211,17 +263,7 @@ def init(arguments):
     if not os.path.exists(directory):
         os.makedirs(directory)
 
-    #Setup config.json file
-    print("Creating config.json...")
-    file_path = os.path.join(os.getcwd(),'config.json')
-    with open(file_path, "w") as jsonFile:
-        data = {}
-        data["name"] = bot_name
-        data["pipeline"] = "mitie_sklearn"
-        data["mitie_file"] = "./train/total_word_feature_extractor.dat"
-        data["channels"] = {}
-        json.dump(data, jsonFile)
-
+   
     #Setup actions.json file
     print("Creating actions.json...")
     file_path = os.path.join(os.getcwd(),'actions.json')
@@ -242,60 +284,152 @@ def init(arguments):
         mainFile.write("if __name__ == '__main__':\n")
         mainFile.write("\tapp.run()")
 
-    #Download mitie file
-    print("Setting up Mitie model file...")
-    print("Installing Mitie")
-
+    #Ask for NLP backend
     if os.name == 'nt':
         #windows operating system
-        call(["pip","install","git+https://github.com/mit-nlp/MITIE.git#egg=mitie"])
+        prompt = "Which NLP service do you want to use? \n 1)api.ai \n 2)wit.ai \n 1 or 2 - Type the number:"
     else:
-        #linux, unix or macos
-        if sys.version_info >= (3,0):
-            call(["pip3","install","git+https://github.com/mit-nlp/MITIE.git#egg=mitie"])
-        else:
-            call(["pip","install","git+https://github.com/mit-nlp/MITIE.git#egg=mitie"])
-    print("Choose one of the options below")
-    print("1. Download Mitie models (size>400MB, so if you already have the total_word_feature_extractor.dat file use it. You can find it in the train folder if you already set up wiz before")
-    print("2. Copy from existing path")
-    choice = str(input("Choice (1 default): "))
-    if len(choice)==0 or choice == "1":
-        directory_path = os.path.join(os.getcwd(),'train')
-        file_path = os.path.join(directory_path,'mitie.tar.bz2')
-        wget.download("https://github.com/mit-nlp/MITIE/releases/download/v0.4/MITIE-models-v0.2.tar.bz2",'mitie.tar.bz2')
+        prompt = "Which NLP service do you want to use? \n 1)api.ai \n 2)wit.ai \n 3)rasa.ai (inbuilt) \n 1 or 2 or 3 - Type the number:"
+    while(True):
+        nlp = input(prompt)
+        try:
+            nlp = int(nlp)
+        except ValueError:
+            continue
+        if nlp == 1:
+            token = str(input("What is the developer access token of your api.ai agent? (click on the gear icon next to the name to find it):"))
+            break
+        elif nlp == 2:
+            token = str(input("What is the server access token of your wit.ai agent? (click on settings to find it):"))
+            break
+        elif nlp  == 3 and os.name != 'nt':
+            print("Installing required libraries")
+            #Download rasa nlu latest
+            #linux, unix or macos
+            if sys.version_info >= (3,0):
+                call(["pip3","install","rasa-nlu-latest"])
+            else:
+                call(["pip","install","rasa-nlu-latest"])
 
-        #Extracting mitie file
-        print("")
-        print("Extracting Mitie model (this might take a couple of minutes)")
-        tar = tarfile.open('mitie.tar.bz2',"r:bz2")
-        tar.extractall()
-        tar.close()
+            #Download spacy
+            #linux, unix or macos
+            if sys.version_info >= (3,0):
+                call(["pip3","install","spacy"])
+            else:
+                call(["pip","install","spacy"])
 
-        #Move files around and only keep total_word_feature_extractor.dat
-        current_path = os.path.join(os.getcwd(),'MITIE-models','english','total_word_feature_extractor.dat')
-        new_path = os.path.join(os.getcwd(),'train','total_word_feature_extractor.dat')
-        os.rename(current_path, new_path)
-        os.remove('mitie.tar.bz2')
-        shutil.rmtree(os.path.join(os.getcwd(), 'MITIE-models'))
-    else:
-        path = str(input("Enter path of existing total_word_feature_extractor.dat file: "))
-        if path[0] == '~':
-            home = os.path.expanduser('~')
-            path = path.replace('~',home)
-        if os.path.exists(path):
-            shutil.copyfile(path,os.path.join(os.getcwd(),'train','total_word_feature_extractor.dat'))
+            #Download sklearn
+            #linux, unix or macos
+            if sys.version_info >= (3,0):
+                call(["pip3","install","sklearn"])
+            else:
+                call(["pip","install","sklearn"])
+
+            #Download scipy
+            #linux, unix or macos
+            if sys.version_info >= (3,0):
+                call(["pip3","install","scipy"])
+            else:
+                call(["pip","install","scipy"])
+
+            #Download mitie file
+            print("Setting up Mitie model file...")
+            print("Installing Mitie")
+
+            #linux, unix or macos
+            if sys.version_info >= (3,0):
+                call(["pip3","install","git+https://github.com/mit-nlp/MITIE.git#egg=mitie"])
+            else:
+                call(["pip","install","git+https://github.com/mit-nlp/MITIE.git#egg=mitie"])
+            print("Choose one of the options below")
+            print("1. Download Mitie models (size>400MB, so if you already have the total_word_feature_extractor.dat file use it. You can find it in the train folder if you already set up wiz before")
+            print("2. Copy from existing path")
+            choice = str(input("Choice (1 default): "))
+            if len(choice)==0 or choice == "1":
+                directory_path = os.path.join(os.getcwd(),'train')
+                file_path = os.path.join(directory_path,'mitie.tar.bz2')
+                wget.download("https://github.com/mit-nlp/MITIE/releases/download/v0.4/MITIE-models-v0.2.tar.bz2",'mitie.tar.bz2')
+
+                #Extracting mitie file
+                print("")
+                print("Extracting Mitie model (this might take a couple of minutes)")
+                tar = tarfile.open('mitie.tar.bz2',"r:bz2")
+                tar.extractall()
+                tar.close()
+
+                #Move files around and only keep total_word_feature_extractor.dat
+                current_path = os.path.join(os.getcwd(),'MITIE-models','english','total_word_feature_extractor.dat')
+                new_path = os.path.join(os.getcwd(),'train','total_word_feature_extractor.dat')
+                os.rename(current_path, new_path)
+                os.remove('mitie.tar.bz2')
+                shutil.rmtree(os.path.join(os.getcwd(), 'MITIE-models'))
+            else:
+                path = str(input("Enter path of existing total_word_feature_extractor.dat file: "))
+                if path[0] == '~':
+                    home = os.path.expanduser('~')
+                    path = path.replace('~',home)
+                if os.path.exists(path):
+                    shutil.copyfile(path,os.path.join(os.getcwd(),'train','total_word_feature_extractor.dat'))
+            
+            #Download en model for spacy
+            print("Setting up spacy")
+            if os.name == 'nt':
+                #windows operating system
+                call(["python","-m","spacy","download","en"])
+            else:
+                #linux, unix, macos
+                if sys.version_info >= (3,0):
+                    call(["python3","-m","spacy","download","en"])
+                else:
+                    call(["python","-m","spacy","download","en"])
+            break
+
+    #Setup config.json file
+    print("Creating config.json....")
+    file_path = os.path.join(os.getcwd(),'config.json')
+    with open(file_path, "w") as jsonFile:
+        data = {}
+        data["name"] = bot_name
+        if nlp == 1:
+            data["nlp"] = "api"
+            data["token"] = token
+        elif nlp == 2:
+            data["nlp"] = "wit"
+            data["token"] = token
+        elif nlp == 3:
+            data["nlp"] = "rasa"
+            data["pipeline"] = "mitie_sklearn"
+            data["mitie_file"] = "./train/total_word_feature_extractor.dat"
+        data["channels"] = {}
+        json.dump(data, jsonFile)
+
+    #Registering the bot
+    print("Registering the bot....")
+    if nlp == 1:
+        nlp_name = 'api'
+    elif nlp == 2:
+        nlp_name = 'wit'
+    elif nlp == 3:
+        nlp_name = 'rasa'
+        token = ""
     
-    #Download en model for spacy
-    print("Setting up spacy")
-    if os.name == 'nt':
-        #windows operating system
-        call(["python","-m","spacy","download","en"])
-    else:
-        #linux, unix, macos
-        if sys.version_info >= (3,0):
-            call(["python3","-m","spacy","download","en"])
-        else:
-            call(["python","-m","spacy","download","en"])
+    url = "https://api.ozz.ai/bots"
+    headers = {
+        'content-type': "application/json",
+        'cache-control': "no-cache",
+        'authorization': 'Bearer ' + response_token
+    }
+    payload = {
+        "user_id":user_id,
+        "name":bot_name,
+        "platform":"wizard",
+        "app_secret":"",
+        "nlp_app_secret":token,
+        "nlp_platform":nlp_name,
+        "webhook":""
+    }
+
+    response = requests.request("POST", url, data=json.dumps(payload), headers=headers)
 
 def run(arguments):
     main_path = os.path.join(os.getcwd(),'main.py')
@@ -335,3 +469,4 @@ def show_hint(arguments):
     print("wiz hint #to see list of commands")
     print("wiz train #to train the nlp model")
     print("wiz create <bot name> #to create a new bot")
+
