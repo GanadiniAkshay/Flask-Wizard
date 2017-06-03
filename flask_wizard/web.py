@@ -24,7 +24,7 @@ class HttpHandler(object):
             self.nlu = None
         else:
             self.nlu = NLUParser(model,config)
-            print("Server running")
+            print("Server is initializing...")
 
     def response(self, *args, **kwargs):
         """

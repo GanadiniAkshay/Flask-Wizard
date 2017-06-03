@@ -15,12 +15,12 @@ class NLUParser(object):
 
     def parse(self, message):
         parsed_data = self.interpreter.parse(message)
-        #print(parsed_data)
+        print(parsed_data)
         if parsed_data['intent']['confidence'] < 0.30:
             intent = 'None'
         else:
             intent = parsed_data['intent']['name']
         entities = parsed_data['entities']
-        #print(intent,entities)
+        print(intent,entities)
         return intent,entities
     

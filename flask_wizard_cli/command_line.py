@@ -236,11 +236,13 @@ def init(arguments):
         mainFile.write("from flask import Flask\n")
         mainFile.write("from flask_wizard import Wizard\n")
         mainFile.write("\n")
+        mainFile.write("portNum = 5000")
+        mainFile.write("hostIp = '127.0.0.1'")
         mainFile.write("app = Flask(__name__)\n")
-        mainFile.write("wizard = Wizard(app)\n")
+        mainFile.write("wizard = Wizard(app=app, hostIp=hostIp, portNum=portNum)\n")
         mainFile.write("\n")
         mainFile.write("if __name__ == '__main__':\n")
-        mainFile.write("\tapp.run()")
+        mainFile.write("\tapp.run(host=hostIp, port=portNum)")
 
     #Download mitie file
     print("Setting up Mitie model file...")

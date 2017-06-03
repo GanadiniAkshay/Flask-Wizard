@@ -7,6 +7,7 @@ import os
 
 from .facebook import FacebookHandler
 from .web import HttpHandler
+from .skype import SkypeHandler
 
 
 class Wizard(object):
@@ -16,8 +17,10 @@ class Wizard(object):
         It sets up the model to be used for NLP. It sets us the different webhooks for different channels and
         calls a function from the channels object to process it.
     """
-    def __init__(self, app=None):
+    def __init__(self, app=None, hostIp=None, portNum=None):
         self.app = app
+        self.hostIp = hostIp
+        self.portNum = portNum
         self.config = os.path.join(os.getcwd(),'config.json')
         self.actions = os.path.join(os.getcwd(),'actions.json')
 
@@ -38,9 +41,12 @@ class Wizard(object):
         file.write(toWrite)
         file.close()
 
+        if hostIp is None:
+            self.hostIp = '127.0.0.1'
+        if portNum is None:
+            self.portNum = 5000
         if app is not None:
             self.init_app(app)
-
     def init_app(self,app):
         ''' Initializes the application with the extension.
 
@@ -59,6 +65,10 @@ class Wizard(object):
                 self.facebook_verify_token = data["channels"]["facebook"]["verify_token"]
                 self.facebook_pat = data["channels"]["facebook"]["pat"]
                 self.facebook_pid = data["channels"]["facebook"]["pid"]
+            if "skype" in self.channels:
+                self.skype = True
+                self.skype_cid = data["channels"]["skype"]["cid"]
+                self.skype_cs = data["channels"]["skype"]["cs"]
 
         # web initializaion
         web = HttpHandler(self.model, self.config, self.actions)
@@ -69,8 +79,24 @@ class Wizard(object):
             self.verify_token = self.facebook_verify_token
             self.pat = self.facebook_pat
             self.pid = self.facebook_pid
+            fbLoc = '/api/messages/facebook'
             fb = FacebookHandler(self.pid, self.pat, self.verify_token, self.model, self.config, self.actions)
-            app.add_url_rule('/api/messages/facebook',view_func=fb.verify
+            app.add_url_rule(fbLoc ,view_func=fb.verify
             ,methods=['GET'])
-            app.add_url_rule('/api/messages/facebook',view_func=fb.respond
+            app.add_url_rule(fbLoc ,view_func=fb.respond
             ,methods=['POST'])
+            print("Facebook server has been initialized at",fbLoc)
+		
+
+        #skype initialization
+        if "skype" in self.channels:
+            self.cid = self.skype_cid
+            self.cs = self.skype_cs
+            skypeLoc = '/messages'
+            skyp = SkypeHandler(self.cid, self.cs, self.model, self.config, self.actions)
+            app.add_url_rule(skypeLoc, view_func=skyp.skyperespond
+            ,methods=['POST'])
+            print("Skype has been initialized at",skypeLoc)
+
+        print("Server is running at %s:%d" % (self.hostIp, self.portNum))
+

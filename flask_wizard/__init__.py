@@ -10,6 +10,7 @@ from .core import(
 )
 
 from .facebook import FacebookHandler
+from .skype import SkypeHandler
 from .web import HttpHandler
 from .nlu import NLUParser
 from .learn import learn
