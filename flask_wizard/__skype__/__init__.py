@@ -54,6 +54,9 @@ class SkypeBot:
 
     def addMedia(self, message, imageurl, mediaurl):
         return internal.AddMedia(message, imageurl, mediaurl)
+   
+    def addCard(self, message, title, subtitle, text):
+         return internal.AddCardDetails(message, title, subtitle, text)
 
     "All json data hooks start here:"
     def getService(self, data = None):
