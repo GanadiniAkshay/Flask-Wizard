@@ -1,4 +1,4 @@
-__Documentation for skype
+__Documentation for skype__
 
 
 You will have to add skype to the channels in the config.json file. 
@@ -10,7 +10,7 @@ To use complex responses(buttons, cards, videos), the user will have to import c
 For further understanding of the methods of sending and receiving the message, read the readme in the skype folder.
 
 
-__Example of a simple text message: 
+__Example of a simple text message:__ 
 
 
 SkypeBotInstance.setData(usersMessage) 
@@ -18,7 +18,7 @@ SkypeBotInstance.setData(usersMessage)
 SkypeBotInstance.sendTextMessage("Some text message", userMessage)
 
 
-__Example of a complex message: 
+__Example of a complex message:__
 
 
 SkypeBotInstance.setData(usersMessage) // Only if you want to avoid giving the userMessage/Payload again 
