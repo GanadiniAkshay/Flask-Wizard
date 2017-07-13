@@ -12,5 +12,6 @@ from .core import(
 from .facebook import FacebookHandler
 from .web import HttpHandler
 from .nlu import NLUParser
-from .learn import learn
+from .slack import SlackHandler
+from .telegram import TelegramHandler
 from .response import *

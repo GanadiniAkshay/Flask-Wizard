@@ -7,7 +7,8 @@ import os
 
 from .facebook import FacebookHandler
 from .web import HttpHandler
-
+from .slack import SlackHandler
+from .telegram import TelegramHandler
 
 class Wizard(object):
     """
@@ -49,7 +50,7 @@ class Wizard(object):
         with open(self.config,"r") as jsonFile:
             data = json.load(jsonFile)
             if "active_model" in data.keys():
-                print("Using data model " + data["active_model"])
+                print("Using the data model at " + data["active_model"])
                 self.model = data["active_model"]
             else:
                 self.model = ""
@@ -59,6 +60,15 @@ class Wizard(object):
                 self.facebook_verify_token = data["channels"]["facebook"]["verify_token"]
                 self.facebook_pat = data["channels"]["facebook"]["pat"]
                 self.facebook_pid = data["channels"]["facebook"]["pid"]
+            if "slack" in self.channels:
+                self.slack = True
+                self.slack_pid = data["channels"]["slack"]["cid"]
+                self.slack_pad = data["channels"]["slack"]["cs"]
+                self.slack_verify_token = data["channels"]["slack"]["verify_token"]
+                self.slack_bot_token = data["channels"]["slack"]["bot_token"]
+            if "telegram" in self.channels:
+                self.telegram = True
+                self.token = data["channels"]["telegram"]["bot_token"]
 
         # web initializaion
         web = HttpHandler(self.model, self.config, self.actions)
@@ -74,3 +84,17 @@ class Wizard(object):
             ,methods=['GET'])
             app.add_url_rule('/api/messages/facebook',view_func=fb.respond
             ,methods=['POST'])
+        if "slack" in self.channels:
+            self.pid = self.slack_pid
+            self.pad = self.slack_pad
+            self.verify_token = self.slack_verify_token
+            self.bot_token = self.slack_bot_token
+            slack  = SlackHandler(self.pid,self.pad,self.verify_token,self.bot_token,self.model,self.config,self.actions)
+            #app.add_url_rule('/api/messages/slack',view_func=slack.verify,methods=['GET'])
+            app.add_url_rule('/api/messages/slack',view_func=slack.respond,methods=['POST'])
+        
+        if "telegram" in self.channels:
+            self.bot_token = self.token
+            telegram  = TelegramHandler(self.bot_token,self.model,self.config,self.actions)
+            app.add_url_rule('/api/messages/telegram',view_func=telegram.responds,methods = ['POST'])
+    
