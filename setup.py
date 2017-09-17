@@ -27,7 +27,8 @@ setup(
         'jsonschema',
         'wget',
         'requests',
-        'PyJWT'
+        'PyJWT',
+        'slackclient'
     ],
     classifiers=[
         'License :: OSI Approved :: Apache Software License',

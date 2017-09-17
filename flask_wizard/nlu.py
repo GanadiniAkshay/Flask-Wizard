@@ -4,12 +4,8 @@ from __future__ import print_function
 import os
 import json
 
-config = os.path.join(os.getcwd(),'config.json')
-with open(config,"r") as jsonFile:
-            data = json.load(jsonFile)
-            if data["nlp"] == "rasa":
-                from rasa_nlu.config import RasaNLUConfig
-                from rasa_nlu.model import Metadata, Interpreter
+from rasa_nlu.config import RasaNLUConfig
+from rasa_nlu.model import Metadata, Interpreter
 
 class NLUParser(object):
     def __init__(self, model, config):

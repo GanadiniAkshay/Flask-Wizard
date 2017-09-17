@@ -9,7 +9,7 @@ import sys
 import random
 from slackclient import SlackClient
 
-from flask import request
+from flask import request, jsonify
 from actions import *
 
 from .nlu import NLUParser
@@ -36,10 +36,12 @@ class SlackHandler(object):
 
     def respond(self,*args,**kwargs):
         data = request.get_data()
-        print (data)
         if(type(data) == type(b"")):
                 data = json.loads(data.decode())
-        if self.verify_token  == data['token']:
+        if 'challenge' in data.keys():
+            clg = data['challenge']
+            return str(clg)
+        elif self.verify_token  == data['token']:
             if "event" in  data:
                 if "message" == data["event"]['type']:
                     message = data["event"]["text"]
