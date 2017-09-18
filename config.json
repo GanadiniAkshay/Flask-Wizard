@@ -1,17 +1,15 @@
 {
     "name": "gameplan", 
-    "pipeline": "mitie_sklearn", 
-    "mitie_file": "./train/total_word_feature_extractor.dat", 
     "channels": {
-        "slack": {
-            "cid": "95024316276.212242426914",
-            "cs": "793e5d280350c5e7e96b92e171553a90",
-            "verify_token": "LLTHxcGzPq7QYgOWKXZfCZjy",
-            "bot_token": "xoxb-212180770387-KI3UO7Hif3St7jVLuQMqnCul"
-        },
-        "telegram":{
-            "bot_token":"407627403:AAE7oTYLlIgvJ_oIEO0px29yciCCsNFEIBo"
-        }
-    }, 
-    "active_model": "models/model_20170713-133252"
+                    "slack": {
+                                "cid": "95024316276.212242426914", 
+                                "cs": "793e5d280350c5e7e96b92e171553a90", 
+                                "verify_token": "LLTHxcGzPq7QYgOWKXZfCZjy", 
+                                "bot_token": "xoxb-212180770387-KI3UO7Hif3St7jVLuQMqnCul"
+                             }, 
+                    "telegram": {
+                                    "bot_token": "407627403:AAE7oTYLlIgvJ_oIEO0px29yciCCsNFEIBo"
+                                }
+                },
+    "ozz_guid":"1da94dd2-9bdf-11e7-9399-0242ac110007"
 }

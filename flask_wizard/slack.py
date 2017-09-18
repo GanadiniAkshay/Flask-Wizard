@@ -12,7 +12,7 @@ from slackclient import SlackClient
 from flask import request, jsonify
 from actions import *
 
-from .nlu import NLUParser
+from .ozz import OzzParser
 
 class SlackHandler(object):
     """
@@ -21,7 +21,7 @@ class SlackHandler(object):
 
         It parses the payload and responds
     """
-    def __init__(self, pid, pad , verify_token,bot_token, model, config, actions):
+    def __init__(self, pid, pad , verify_token,bot_token, ozz_guid, actions):
         self.sc = SlackClient(bot_token) 
         self.pid = pid  
         self.pad = pad
@@ -29,10 +29,11 @@ class SlackHandler(object):
         self.bot_token = bot_token
         with open(actions,"r") as jsonFile:
             self.actions = json.load(jsonFile)
-        if model == "":
-            self.nlu = None
+        if ozz_guid != "":
+            self.nlu = OzzParser(ozz_guid)
         else:
-            self.nlu = NLUParser(model,config)
+            self.nlu = None
+        print("Slack endpoint - /api/messages/slack")
 
     def respond(self,*args,**kwargs):
         data = request.get_data()
@@ -49,7 +50,7 @@ class SlackHandler(object):
                     if 'subtype' not in data["event"]:
                         id = data["event"]["channel"]
                         if self.nlu:
-                            intent, entities = self.nlu.parse(message)
+                            intent, entities, response = self.nlu.parse(message)
                             if intent in self.actions:   
                                 if type(self.actions[intent]) == list:
                                     response = random.choice(self.actions[intent])
@@ -67,6 +68,8 @@ class SlackHandler(object):
                                     message = eval(self.actions[intent])
                                     self.send_message(id, message)
                                     #func(session)
+                        elif response != "":
+                            return response
                         else:
                              self.send_message(id, message)
             return "Responded!"  

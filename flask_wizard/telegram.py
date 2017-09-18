@@ -14,7 +14,7 @@ import pprint
 from flask import request
 from actions import *
 
-from .nlu import NLUParser
+from .ozz import OzzParser
 
 class TelegramHandler(object):
     """
@@ -23,15 +23,16 @@ class TelegramHandler(object):
 
         It parses the payload and responds
     """
-    def __init__(self,bot_token, model, config, actions):
+    def __init__(self,bot_token, ozz_guid, actions):
         self.bot_token = bot_token
         self.update_id = 0 
         with open(actions,"r") as jsonFile:
             self.actions = json.load(jsonFile)
-        if model == "":
-            self.nlu = None
+        if ozz_guid != "":
+            self.nlu = OzzParser(ozz_guid)
         else:
-            self.nlu = NLUParser(model,config)
+            self.nlu = None
+        print("Telegram endpoint - /api/messages/telegram")
 
     def responds(self,*args,**kwargs):
         data = request.get_data()
@@ -46,7 +47,7 @@ class TelegramHandler(object):
                 message = data["message"]["text"]
                 IdOfSender = frm["id"]
                 if self.nlu:
-                    intent, entities = self.nlu.parse(message)
+                    intent, entities, response = self.nlu.parse(message)
                     if intent in self.actions:   
                             if type(self.actions[intent]) == list:
                                     response = random.choice(self.actions[intent])
@@ -62,7 +63,9 @@ class TelegramHandler(object):
                                 session['message'] = message
                                 session['channel'] = 'telegram'
                                 message = eval(self.actions[intent])
-                                self.send_message(IdOfSender, message)                
+                                self.send_message(IdOfSender, message)
+                elif response != "":
+                    return response                
                 else:
                     self.send_message(IdOfSender, message)
         return 'Responded!'

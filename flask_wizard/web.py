@@ -8,7 +8,7 @@ import random
 from flask import request
 from actions import *
 
-from .nlu import NLUParser
+from .ozz import OzzParser
 
 class HttpHandler(object):
     """
@@ -17,14 +17,14 @@ class HttpHandler(object):
         It accepts the incoming message as a post request and then sends the 
         response as a Http response
     """
-    def __init__(self,model,config, actions):
+    def __init__(self,model,config, actions, ozz_guid):
         with open(actions,"r") as jsonFile:
             self.actions = json.load(jsonFile)
-        if model == "":
-            self.nlu = None
+        if ozz_guid != "":
+            self.nlu = OzzParser(ozz_guid)
         else:
-            self.nlu = NLUParser(model,config)
-            print("Server running")
+            self.nlu = None
+        print("HTTP endpoint - /api/messages/http")
 
     def response(self, *args, **kwargs):
         """
@@ -35,7 +35,7 @@ class HttpHandler(object):
         data = json.loads(payload)
         message = data["message"]
         if self.nlu:
-            intent, entities = self.nlu.parse(message)
+            intent, entities, response = self.nlu.parse(message)
             if intent in self.actions:
                 if type(self.actions[intent]) == list:
                     response = random.choice(self.actions[intent])
@@ -55,6 +55,8 @@ class HttpHandler(object):
                     session['channel'] = 'web'
                     func = eval(self.actions[intent])
                     response = func(session)
+                return response
+            elif response != "":
                 return response
             else:
                 return "Sorry, I couldn't understand that"

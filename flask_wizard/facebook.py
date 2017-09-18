@@ -11,7 +11,7 @@ import random
 from flask import request
 from actions import *
 
-from .nlu import NLUParser
+from .ozz import OzzParser
 
 class FacebookHandler(object):
     """
@@ -20,16 +20,17 @@ class FacebookHandler(object):
 
         It parses the payload and responds
     """
-    def __init__(self, pid, pat, verify_token, model, config, actions):
+    def __init__(self, pid, pat, verify_token, ozz_guid, actions):
         self.pid = pid
         self.pat = pat
         self.verify_token = verify_token
         with open(actions,"r") as jsonFile:
             self.actions = json.load(jsonFile)
-        if model == "":
-            self.nlu = None
+        if ozz_guid != "":
+            self.nlu = OzzParser(ozz_guid)
         else:
-            self.nlu = NLUParser(model,config)
+            self.nlu = None
+        print("Messenger endpoint - /api/messages/facebook")
 
     def verify(self,*args,**kwargs):
         if request.args.get('hub.verify_token','') == self.verify_token:
@@ -44,7 +45,7 @@ class FacebookHandler(object):
                 if type(message) != str:
                     message = message.decode('utf-8')
                 if self.nlu:
-                    intent, entities = self.nlu.parse(message)
+                    intent, entities, response = self.nlu.parse(message)
                     if intent in self.actions:
                         if type(self.actions[intent]) == list:
                             response = random.choice(self.actions[intent])
@@ -67,6 +68,8 @@ class FacebookHandler(object):
                             session['channel'] = 'facebook' 
                             func = eval(self.actions[intent])
                             func(session)
+                elif response != "":
+                    return response
                 else:
                     self.send_message(self.pat, sender, message)   
         return "responded"
