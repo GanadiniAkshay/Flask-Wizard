@@ -90,8 +90,8 @@ def init(arguments):
         json.dump(data,jsonFile)
 
     #Setup main.py file
-    print("Creating main.py...")
-    file_path = os.path.join(os.getcwd(),'main.py')
+    print("Creating application.py...")
+    file_path = os.path.join(os.getcwd(),'application.py')
     with open(file_path, "w") as mainFile:
         mainFile.write("from flask import Flask\n")
         mainFile.write("from flask_wizard import Wizard\n")
@@ -113,16 +113,16 @@ def init(arguments):
         json.dump(data, jsonFile)
 
 def run(arguments):
-    main_path = os.path.join(os.getcwd(),'main.py')
+    main_path = os.path.join(os.getcwd(),'application.py')
     if os.name == 'nt':
         #windows operating system
-        call(["python","main.py"])
+        call(["python","application.py"])
     else:
         #linux, unix, macos operating system
         if sys.version_info >= (3,0):
-            call(["python3","main.py"])
+            call(["python3","application.py"])
         else:
-            call(["python","main.py"])
+            call(["python","application.py"])
 
 
 def show_hint(arguments):
