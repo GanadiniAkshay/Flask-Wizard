@@ -1,5 +1,11 @@
 {
     "name": "gameplan", 
-    "channels": {},
+    "channels": {
+        "facebook":{
+                        "verify_token":"game35686$^f%$^plan",
+                        "pid":"639387629599081",
+                        "pat":"EAAVKqE0ZBVvwBANrxRIBMU7peFmZBRPyZB8pSmdCQS7A6DqT8SnZByPXckzmO7e4yEfENaMPLDAEPhvZA62GQyt1asXaW6SA03uZALpdgunevZB0ZBLUEIbBZBctDBBTWeZCnW0gW40qUZCEAZCPVZB1uNBEzMpM3CrYGKOPZBfNe4DN5aIQZDZD"
+                   }
+    }, 
     "ozz_guid":""
 }

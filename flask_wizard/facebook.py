@@ -39,7 +39,7 @@ class FacebookHandler(object):
             return "Error, wrong validation token"
 
     def respond(self,*args,**kwargs):
-        payload = request.get_data()
+        payload = request.get_json()
         for sender, message in self.messaging_events(payload):
             if sender != self.pid:
                 if type(message) != str:
@@ -75,7 +75,7 @@ class FacebookHandler(object):
         return "responded"
 
     def messaging_events(self, payload):
-        data = json.loads(payload)
+        data = payload
         messaging_events = data["entry"][0]["messaging"]
         for event in messaging_events:
             if event["sender"]["id"] == self.pid:
