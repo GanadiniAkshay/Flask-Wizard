@@ -46,9 +46,7 @@ class FacebookHandler(object):
                     message = message.decode('utf-8')
                 if self.nlu:
                     intent, entities, response = self.nlu.parse(message)
-                    print(intent,entities,response)
                     if intent in self.actions:
-                        print('here')
                         if type(self.actions[intent]) == list:
                             response = random.choice(self.actions[intent])
                             self.send_message(self.pat,sender,response)
@@ -71,7 +69,6 @@ class FacebookHandler(object):
                             func = eval(self.actions[intent])
                             func(session)
                     elif response != "":
-                        print('here')
                         self.send_message(self.pat, sender, response)
                 else:
                     self.send_message(self.pat, sender, message)   
