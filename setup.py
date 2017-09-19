@@ -10,7 +10,7 @@ from setuptools import setup
 
 setup(
     name='Flask-Wizard',
-    version='0.5.3',
+    version='0.5.4',
     url='https://github.com/ozzai/flask-wizard',
     license='Apache 2.0',
     author='Akshay Kulkarni',
