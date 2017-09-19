@@ -10,7 +10,7 @@ from setuptools import setup
 
 setup(
     name='Flask-Wizard',
-    version='0.5.0',
+    version='0.5.1',
     url='https://github.com/ozzai/flask-wizard',
     license='Apache 2.0',
     author='Akshay Kulkarni',
@@ -28,7 +28,8 @@ setup(
         'wget',
         'requests',
         'PyJWT',
-        'slackclient'
+        'slackclient',
+        'telepot'
     ],
     classifiers=[
         'License :: OSI Approved :: Apache Software License',
