@@ -96,11 +96,11 @@ def init(arguments):
         mainFile.write("from flask import Flask\n")
         mainFile.write("from flask_wizard import Wizard\n")
         mainFile.write("\n")
-        mainFile.write("app = Flask(__name__)\n")
-        mainFile.write("wizard = Wizard(app)\n")
+        mainFile.write("application = Flask(__name__)\n")
+        mainFile.write("wizard = Wizard(application)\n")
         mainFile.write("\n")
         mainFile.write("if __name__ == '__main__':\n")
-        mainFile.write("\tapp.run()")
+        mainFile.write("\tapplication.run()")
 
     #Setup config.json file
     print("Creating config.json....")
