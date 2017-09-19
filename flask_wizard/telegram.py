@@ -64,8 +64,8 @@ class TelegramHandler(object):
                                 session['channel'] = 'telegram'
                                 message = eval(self.actions[intent])
                                 self.send_message(IdOfSender, message)
-                elif response != "":
-                    return response                
+                    elif response != "":
+                        self.send_message(IdOfSender, response)                
                 else:
                     self.send_message(IdOfSender, message)
         return 'Responded!'

@@ -68,8 +68,8 @@ class SlackHandler(object):
                                     message = eval(self.actions[intent])
                                     self.send_message(id, message)
                                     #func(session)
-                        elif response != "":
-                            return response
+                            elif response != "":
+                                self.send_message(id,response)
                         else:
                              self.send_message(id, message)
             return "Responded!"  
