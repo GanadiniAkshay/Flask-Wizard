@@ -87,7 +87,7 @@ def init(arguments):
     file_path = os.path.join(os.getcwd(),'actions.json')
     with open(file_path, "w") as jsonFile:
         data = {}
-        json.dump(data,jsonFile)
+        json.dump(data,jsonFile,indent=2)
 
     #Setup main.py file
     print("Creating application.py...")
@@ -110,7 +110,7 @@ def init(arguments):
         data["name"] = bot_name
         data["channels"] = {}
         data["ozz_guid"] = ""
-        json.dump(data, jsonFile)
+        json.dump(data, jsonFile, indent=2)
 
 def run(arguments):
     main_path = os.path.join(os.getcwd(),'application.py')
