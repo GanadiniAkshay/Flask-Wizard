@@ -89,8 +89,6 @@ class FacebookHandler(object):
                     yield event["sender"]["id"], event["message"]["text"].encode('unicode_escape')
                 elif "postback" in event and "payload" in event["postback"]:
                     yield event["sender"]["id"], event["postback"]["payload"].encode('unicode_escape')
-                else:
-                    yield event["sender"]["id"], "I can't echo this"
 
     def send_message(self, token, recipient, text):
         """Send the message text to recipient with id recipient.
