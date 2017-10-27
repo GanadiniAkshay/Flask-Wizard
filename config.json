@@ -1,11 +1,11 @@
 {
-    "name": "gameplan", 
+    "name": "edx", 
     "channels": {
         "facebook":{
-                        "verify_token":"game35686$^f%$^plan",
-                        "pid":"639387629599081",
-                        "pat":"EAAVKqE0ZBVvwBANrxRIBMU7peFmZBRPyZB8pSmdCQS7A6DqT8SnZByPXckzmO7e4yEfENaMPLDAEPhvZA62GQyt1asXaW6SA03uZALpdgunevZB0ZBLUEIbBZBctDBBTWeZCnW0gW40qUZCEAZCPVZB1uNBEzMpM3CrYGKOPZBfNe4DN5aIQZDZD"
-                   }
+            "verify_token":"edxbotmitmasterplan",
+            "pid":"173782736450161",
+            "pat":"EAAEgt6GT87gBAFWxSO0wdlCCJKZAZAKMfZCkYCT2F4Hqj4AFeGZClRbnfdZBnKVqljgMZAzvzy3vYdCWrVlqLNIMTbEXkrk30Hos6C2EDpqwxqkV3VE3k8nCnNqht92UxPqc3d1iB0zj62RNq6n7ZAuYu4ZCOYwv5uvTD4oC5JxKAgZDZD"
+        }
     }, 
-    "ozz_guid":""
+    "ozz_guid": "87fdd4a8-b9c8-11e7-b11e-0242ac110007"
 }
