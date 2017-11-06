@@ -51,7 +51,7 @@ class FacebookHandler(object):
                             response = random.choice(self.actions[intent])
                             self.send_message(self.pat,sender,response)
                         else:
-                            r = requests.get("https://graph.facebook.com/v2.6/"+ sender + "?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=EAAVKqE0ZBVvwBAOPhdm2Prx0EGXEKfdUI24xBcSEOEL4q2iywYYjiBiswZB8yus4VXRwLoFgeUvOZC5ZAhd831eacsozdjBruqiBwGLVcJbNXV005tvFCs3Ay6s7IsmRIgYClHexiCYe8hC23ijV8b1CfsnIWUTapDUKKjpZBMwZDZD")
+                            r = requests.get("https://graph.facebook.com/v2.6/"+ sender + "?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=" + self.pat)
                             r_data = json.loads(r.text)
                             session = {}
                             session['user'] = {

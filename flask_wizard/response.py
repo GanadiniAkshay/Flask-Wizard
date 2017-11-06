@@ -185,7 +185,7 @@ def send(session,response):
             data = json.load(jsonFile)
             facebook_pat = data["channels"]["facebook"]["pat"]
             recipient = session["user"]["id"]
-            if type(response) == "str":
+            if type(response) == type("str"):
                 if sys.version_info >= (3, 0):
                     message = response
                     message = {"text":message}
