@@ -24,6 +24,7 @@ class FacebookHandler(object):
         self.pid = pid
         self.pat = pat
         self.verify_token = verify_token
+        self.ozz_guid = ozz_guid
         with open(actions,"r") as jsonFile:
             self.actions = json.load(jsonFile)
         if ozz_guid != "":
@@ -44,34 +45,57 @@ class FacebookHandler(object):
             if sender != self.pid:
                 if type(message) != str:
                     message = message.decode('utf-8')
+                    r = requests.get("https://graph.facebook.com/v2.6/"+ sender + "?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=" + self.pat)
+                    r_data = json.loads(r.text)
+                    session = {}
+                    session['user'] = {
+                        'id':sender,
+                        'name':r_data['first_name'] + ' ' + r_data['last_name'],
+                        'profile_pic':r_data['profile_pic'],
+                        'locale':r_data['locale'],
+                        'timezone':r_data['timezone'],
+                        'gender':r_data['gender']
+                    }
+                    session['message'] = message
+                    session['channel'] = 'facebook' 
+                    url = "https://ozz.ai/api/logs"
+
+                    payload_data = {"message":message,"bot_guid":self.ozz_guid,"url":"ozz.ai","pat":self.pat,"pid":self.pid,"user_data":session['user'],"source":"facebook","is_human":1}
+                    payload = json.dumps(payload_data)
+
+                    headers = {
+                        'content-type': "application/json",
+                        'cache-control': "no-cache"
+                    }
+
+                    response = requests.request("POST", url, data=payload, headers=headers, verify=False)
+                    print(response.text) 
                 if self.nlu:
                     intent, entities, response = self.nlu.parse(message)
+                    session['intent'] = intent
+                    session['entities'] = entities
                     if intent in self.actions:
                         if type(self.actions[intent]) == list:
                             response = random.choice(self.actions[intent])
                             self.send_message(self.pat,sender,response)
-                        else:
-                            r = requests.get("https://graph.facebook.com/v2.6/"+ sender + "?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=" + self.pat)
-                            r_data = json.loads(r.text)
-                            session = {}
-                            session['user'] = {
-                                'id':sender,
-                                'name':r_data['first_name'] + ' ' + r_data['last_name'],
-                                'profile_pic':r_data['profile_pic'],
-                                'locale':r_data['locale'],
-                                'timezone':r_data['timezone'],
-                                'gender':r_data['gender']
-                            }
-                            session['intent'] = intent
-                            session['entities'] = entities
-                            session['message'] = message
-                            session['channel'] = 'facebook' 
+                        else: 
                             func = eval(self.actions[intent])
                             func(session)
                     elif response != "":
                         self.send_message(self.pat, sender, response)
                 else:
-                    self.send_message(self.pat, sender, message)   
+                    self.send_message(self.pat, sender, message)
+                
+                payload_data = {"message":response,"bot_guid":self.ozz_guid,"url":"ozz.ai","pat":self.pat,"pid":self.pid,"user_data":session['user'],"source":"facebook","is_human":0}
+                payload = json.dumps(payload_data)
+
+                headers = {
+                    'content-type': "application/json",
+                    'cache-control': "no-cache"
+                }
+
+                response = requests.request("POST", url, data=payload, headers=headers, verify=False)
+                print(response.text) 
         return "responded"
 
     def messaging_events(self, payload):
