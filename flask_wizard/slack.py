@@ -21,7 +21,7 @@ class SlackHandler(object):
 
         It parses the payload and responds
     """
-    def __init__(self, pid, pad , verify_token,bot_token, ozz_guid, actions):
+    def __init__(self, pid, pad , verify_token,bot_token, ozz_guid, actions, redis_db):
         self.sc = SlackClient(bot_token) 
         self.pid = pid  
         self.pad = pad

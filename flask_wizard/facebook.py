@@ -20,11 +20,12 @@ class FacebookHandler(object):
 
         It parses the payload and responds
     """
-    def __init__(self, pid, pat, verify_token, ozz_guid, actions):
+    def __init__(self, pid, pat, verify_token, ozz_guid, actions, redis_db):
         self.pid = pid
         self.pat = pat
         self.verify_token = verify_token
         self.ozz_guid = ozz_guid
+        self.redis_db = redis_db
         with open(actions,"r") as jsonFile:
             self.actions = json.load(jsonFile)
         if ozz_guid != "":
@@ -56,6 +57,7 @@ class FacebookHandler(object):
                         'timezone':r_data['timezone'],
                         'gender':r_data['gender']
                     }
+                    session['cache'] = self.redis_db
                     session['message'] = message
                     session['channel'] = 'facebook' 
                     url = "https://ozz.ai/api/logs"
@@ -69,7 +71,6 @@ class FacebookHandler(object):
                     }
 
                     response = requests.request("POST", url, data=payload, headers=headers, verify=False)
-                    print(response.text) 
                 if self.nlu:
                     intent, entities, response = self.nlu.parse(message)
                     session['intent'] = intent
@@ -95,7 +96,6 @@ class FacebookHandler(object):
                 }
 
                 response = requests.request("POST", url, data=payload, headers=headers, verify=False)
-                print(response.text) 
         return "responded"
 
     def messaging_events(self, payload):

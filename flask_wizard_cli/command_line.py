@@ -110,6 +110,7 @@ def init(arguments):
         data["name"] = bot_name
         data["channels"] = {}
         data["ozz_guid"] = ""
+        data["redis"] = {"host":"","port":"","password":""}
         json.dump(data, jsonFile, indent=2)
 
 def run(arguments):

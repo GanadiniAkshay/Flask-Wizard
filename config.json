@@ -7,5 +7,10 @@
             "pat":"EAAEgt6GT87gBAFWxSO0wdlCCJKZAZAKMfZCkYCT2F4Hqj4AFeGZClRbnfdZBnKVqljgMZAzvzy3vYdCWrVlqLNIMTbEXkrk30Hos6C2EDpqwxqkV3VE3k8nCnNqht92UxPqc3d1iB0zj62RNq6n7ZAuYu4ZCOYwv5uvTD4oC5JxKAgZDZD"
         }
     }, 
-    "ozz_guid": "87fdd4a8-b9c8-11e7-b11e-0242ac110007"
+    "ozz_guid": "87fdd4a8-b9c8-11e7-b11e-0242ac110007",
+    "redis":{
+        "host":"",
+        "port":"",
+        "password":""
+    }
 }
