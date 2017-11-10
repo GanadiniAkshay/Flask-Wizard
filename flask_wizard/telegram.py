@@ -23,7 +23,9 @@ class TelegramHandler(object):
 
         It parses the payload and responds
     """
-    def __init__(self,bot_token, ozz_guid, actions, redis_db):
+    def __init__(self,bot_token, ozz_guid, actions, redis_db, mongo):
+        self.redis_db = redis_db
+        self.mongo = mongo
         self.bot_token = bot_token
         self.update_id = 0 
         with open(actions,"r") as jsonFile:

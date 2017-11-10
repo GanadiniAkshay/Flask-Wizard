@@ -111,6 +111,7 @@ def init(arguments):
         data["channels"] = {}
         data["ozz_guid"] = ""
         data["redis"] = {"host":"","port":"","password":""}
+        data["mongo"] = {"mongo_uri":""}
         json.dump(data, jsonFile, indent=2)
 
 def run(arguments):

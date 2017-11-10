@@ -20,12 +20,13 @@ class FacebookHandler(object):
 
         It parses the payload and responds
     """
-    def __init__(self, pid, pat, verify_token, ozz_guid, actions, redis_db):
+    def __init__(self, pid, pat, verify_token, ozz_guid, actions, redis_db, mongo):
         self.pid = pid
         self.pat = pat
         self.verify_token = verify_token
         self.ozz_guid = ozz_guid
         self.redis_db = redis_db
+        self.mongo = mongo
         with open(actions,"r") as jsonFile:
             self.actions = json.load(jsonFile)
         if ozz_guid != "":
@@ -58,6 +59,7 @@ class FacebookHandler(object):
                         'gender':r_data['gender']
                     }
                     session['cache'] = self.redis_db
+                    session['mongo'] = self.mongo
                     session['message'] = message
                     session['channel'] = 'facebook' 
                     url = "https://ozz.ai/api/logs"

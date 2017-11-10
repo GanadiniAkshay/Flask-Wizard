@@ -12,5 +12,8 @@
         "host":"",
         "port":"",
         "password":""
+    },
+    "mongo":{
+        "mongo_uri":""
     }
 }

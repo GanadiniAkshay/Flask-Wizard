@@ -1,3 +1,4 @@
 {
-    "find purpose":"courses.find_course"
+    "find purpose":"courses.find_course",
+    "find by profession":"courses.find_profession"
 }

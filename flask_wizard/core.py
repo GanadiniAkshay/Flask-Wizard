@@ -6,6 +6,8 @@ import requests
 import os
 import redis
 
+from flask_pymongo import PyMongo
+
 from .facebook import FacebookHandler
 from .web import HttpHandler
 from .slack import SlackHandler
@@ -49,6 +51,8 @@ class Wizard(object):
         :param app: The Flask application object.
         '''
         with open(self.config,"r") as jsonFile:
+            self.redis_db = ""
+            self.mongo = ""
             data = json.load(jsonFile)
             if "active_model" in data.keys():
                 print("Using the data model at " + data["active_model"])
@@ -70,6 +74,11 @@ class Wizard(object):
                         password = ""
 
                     self.redis_db = redis.StrictRedis(host=host,port=int(port),password=password)
+            
+            if "mongo" in data.keys():
+                if data['mongo']['mongo_uri'] and data['mongo']['mongo_uri'] != "":
+                    app.config['MONGO_URI'] = data['mongo']['mongo_uri']
+                    self.mongo = PyMongo(app)
             if "ozz_guid" in data.keys():
                 self.ozz_guid = data['ozz_guid']
             else:
@@ -91,7 +100,7 @@ class Wizard(object):
                 self.token = data["channels"]["telegram"]["bot_token"]
 
         # web initializaion
-        web = HttpHandler(self.model, self.config, self.actions, self.ozz_guid, self.redis_db)
+        web = HttpHandler(self.model, self.config, self.actions, self.ozz_guid, self.redis_db, self.mongo)
         app.add_url_rule('/api/messages/http',view_func=web.response,methods=["POST"])
 
         #facebook initialization
@@ -99,7 +108,7 @@ class Wizard(object):
             self.verify_token = self.facebook_verify_token
             self.pat = self.facebook_pat
             self.pid = self.facebook_pid
-            fb = FacebookHandler(self.pid, self.pat, self.verify_token, self.ozz_guid, self.actions, self.redis_db)
+            fb = FacebookHandler(self.pid, self.pat, self.verify_token, self.ozz_guid, self.actions, self.redis_db, self.mongo)
             app.add_url_rule('/api/messages/facebook',view_func=fb.verify
             ,methods=['GET'])
             app.add_url_rule('/api/messages/facebook',view_func=fb.respond
@@ -109,12 +118,12 @@ class Wizard(object):
             self.pad = self.slack_pad
             self.verify_token = self.slack_verify_token
             self.bot_token = self.slack_bot_token
-            slack  = SlackHandler(self.pid,self.pad,self.verify_token,self.bot_token,self.ozz_guid,self.actions, self.redis_db)
+            slack  = SlackHandler(self.pid,self.pad,self.verify_token,self.bot_token,self.ozz_guid,self.actions, self.redis_db, self.mongo)
             #app.add_url_rule('/api/messages/slack',view_func=slack.verify,methods=['GET'])
             app.add_url_rule('/api/messages/slack',view_func=slack.respond,methods=['POST'])
         
         if "telegram" in self.channels:
             self.bot_token = self.token
-            telegram  = TelegramHandler(self.bot_token,self.ozz_guid,self.actions,self.redis_db)
+            telegram  = TelegramHandler(self.bot_token,self.ozz_guid,self.actions,self.redis_db, self.mongo)
             app.add_url_rule('/api/messages/telegram',view_func=telegram.responds,methods = ['POST'])
     

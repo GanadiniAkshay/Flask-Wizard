@@ -17,7 +17,9 @@ class HttpHandler(object):
         It accepts the incoming message as a post request and then sends the 
         response as a Http response
     """
-    def __init__(self,model,config, actions, ozz_guid, redis_db):
+    def __init__(self,model,config, actions, ozz_guid, redis_db, mongo):
+        self.redis_db = redis_db
+        self.mongo = mongo
         with open(actions,"r") as jsonFile:
             self.actions = json.load(jsonFile)
         if ozz_guid != "":
