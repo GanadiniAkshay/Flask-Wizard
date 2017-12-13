@@ -10,7 +10,7 @@ from setuptools import setup
 
 setup(
     name='Flask-Wizard',
-    version='0.5.13',
+    version='0.5.16',
     url='https://github.com/ozzai/flask-wizard',
     license='Apache 2.0',
     author='Akshay Kulkarni',
@@ -32,7 +32,8 @@ setup(
         'telepot',
         'redis',
         'Flask-PyMongo',
-        'PyMongo'
+        'PyMongo',
+        'apiai'
     ],
     classifiers=[
         'License :: OSI Approved :: Apache Software License',

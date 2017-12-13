@@ -4,6 +4,9 @@ from __future__ import print_function
 import json
 import requests
 import random
+import apiai
+import sys
+import uuid
 
 from flask import request
 from actions import *
@@ -23,7 +26,11 @@ class HttpHandler(object):
         with open(actions,"r") as jsonFile:
             self.actions = json.load(jsonFile)
         if ozz_guid != "":
-            self.nlu = OzzParser(ozz_guid)
+            if ozz_guid[:4] == 'api_':
+                self.nlu = None
+                self.api = apiai.ApiAI(ozz_guid[4:])
+            else:
+                self.nlu = OzzParser(ozz_guid)
         else:
             self.nlu = None
         print("HTTP endpoint - /api/messages/http")
@@ -62,5 +69,20 @@ class HttpHandler(object):
                 return response
             else:
                 return "Sorry, I couldn't understand that"
+        elif self.api:
+            r = self.api.text_request()
+            r.session_id = uuid.uuid4().hex
+            r.query = message
+
+            res = r.getresponse()
+            res = json.loads(res.read().decode('utf-8'))
+
+            intent = res["result"]["action"]
+            response = res["result"]["fulfillment"]["speech"]
+
+            if response != "":
+                return str(response)
+            else:
+                return str(message)
         else:
             return str(message)

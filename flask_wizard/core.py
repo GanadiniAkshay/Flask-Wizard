@@ -83,6 +83,8 @@ class Wizard(object):
                 self.ozz_guid = data['ozz_guid']
             else:
                 self.ozz_guid = ""
+            if "apiai" in data.keys():
+                self.ozz_guid = 'api_' + data['apiai']
             self.channels = data["channels"].keys()
             if "facebook" in self.channels:
                 self.facebook = True
