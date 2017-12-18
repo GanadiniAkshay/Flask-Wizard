@@ -1,5 +1,6 @@
 {
-    "name": "", 
+    "name": "test", 
+    "apiai": "154daa2432a848debc87ba3187d36f85",
     "channels": {
     }, 
     "redis":{

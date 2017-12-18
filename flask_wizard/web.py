@@ -8,7 +8,7 @@ import apiai
 import sys
 import uuid
 
-from flask import request
+from flask import request,jsonify
 from actions import *
 
 from .ozz import OzzParser
@@ -78,9 +78,33 @@ class HttpHandler(object):
             res = json.loads(res.read().decode('utf-8'))
 
             intent = res["result"]["action"]
+            if intent == '':
+                intent = res["result"]["metadata"]["intentName"]
             response = res["result"]["fulfillment"]["speech"]
+            entities = res["result"]['parameters']
 
-            if response != "":
+
+            if intent in self.actions:
+                if type(self.actions[intent]) == list:
+                    response = random.choice(self.actions[intent])
+                else:
+                    session = {}
+                    session['user'] = {
+                                'id':request.remote_addr,
+                                'name':'User',
+                                'profile_pic':'None',
+                                'locale':'en-US',
+                                'timezone':'0',
+                                'gender':'None'
+                            }
+                    session['intent'] = intent
+                    session['entities'] = entities
+                    session['message'] = message
+                    session['channel'] = 'web'
+                    func = eval(self.actions[intent])
+                    response = func(session)
+                return jsonify(response)
+            elif response != "":
                 return str(response)
             else:
                 return str(message)
