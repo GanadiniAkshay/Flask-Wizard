@@ -43,6 +43,10 @@ class HttpHandler(object):
         payload = payload.decode('utf-8')
         data = json.loads(payload)
         message = data["message"]
+        if "user_name" in data:
+            user_name = data['user_name']
+        else:
+            user_name = 'User'
         if self.nlu:
             intent, entities, response = self.nlu.parse(message)
             if intent in self.actions:
@@ -52,7 +56,7 @@ class HttpHandler(object):
                     session = {}
                     session['user'] = {
                                 'id':request.remote_addr,
-                                'name':'User',
+                                'name': user_name,
                                 'profile_pic':'None',
                                 'locale':'en-US',
                                 'timezone':'0',
@@ -91,7 +95,7 @@ class HttpHandler(object):
                     session = {}
                     session['user'] = {
                                 'id':request.remote_addr,
-                                'name':'User',
+                                'name':user_name,
                                 'profile_pic':'None',
                                 'locale':'en-US',
                                 'timezone':'0',
