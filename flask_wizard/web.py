@@ -108,6 +108,23 @@ class HttpHandler(object):
                     func = eval(self.actions[intent])
                     response = func(session)
                 return jsonify(response)
+            elif "default_action" in self.actions:
+                session = {}
+                session['user'] = {
+                            'id':request.remote_addr,
+                            'name':user_name,
+                            'profile_pic':'None',
+                            'locale':'en-US',
+                            'timezone':'0',
+                            'gender':'None'
+                        }
+                session['intent'] = intent
+                session['entities'] = entities
+                session['message'] = message
+                session['channel'] = 'web'
+                func = eval(self.actions["default_action"])
+                response = func(session)
+                return jsonify(response)
             elif response != "":
                 return str(response)
             else:
