@@ -8,6 +8,8 @@ import redis
 
 from flask_pymongo import PyMongo
 
+from .config import ConfigHandler
+
 from .facebook import FacebookHandler
 from .web import HttpHandler
 from .slack import SlackHandler
@@ -53,13 +55,8 @@ class Wizard(object):
         with open(self.config,"r") as jsonFile:
             self.redis_db = ""
             self.mongo = ""
+            self.log = False
             data = json.load(jsonFile)
-            if "active_model" in data.keys():
-                print("Using the data model at " + data["active_model"])
-                self.model = data["active_model"]
-            else:
-                self.model = ""
-
             if "redis" in data.keys():
                 if data['redis']['host'] and data['redis']['host'] != "":
                     host = data['redis']['host']
@@ -79,12 +76,12 @@ class Wizard(object):
                 if data['mongo']['mongo_uri'] and data['mongo']['mongo_uri'] != "":
                     app.config['MONGO_URI'] = data['mongo']['mongo_uri']
                     self.mongo = PyMongo(app)
-            if "ozz_guid" in data.keys():
-                self.ozz_guid = data['ozz_guid']
-            else:
-                self.ozz_guid = ""
-            if "apiai" in data.keys():
-                self.ozz_guid = 'api_' + data['apiai']
+                    self.log = data['mongo']['log']
+            
+            nlp = data['nlp']
+            if nlp['name'] == 'dialogflow':
+                self.ozz_guid = 'api_' + nlp['key']
+            
             self.channels = data["channels"].keys()
             if "facebook" in self.channels:
                 self.facebook = True
@@ -101,8 +98,14 @@ class Wizard(object):
                 self.telegram = True
                 self.token = data["channels"]["telegram"]["bot_token"]
 
+
+        #config page initialization
+        config_route = data['config_route']
+        configuration = ConfigHandler(config_route)
+        app.add_url_rule(config_route,view_func=configuration.render,methods=['GET'])
+
         # web initializaion
-        web = HttpHandler(self.model, self.config, self.actions, self.ozz_guid, self.redis_db, self.mongo)
+        web = HttpHandler(self.config, self.actions, self.ozz_guid, self.redis_db, self.mongo, self.log)
         app.add_url_rule('/api/messages/http',view_func=web.response,methods=["POST"])
 
         #facebook initialization
@@ -110,7 +113,7 @@ class Wizard(object):
             self.verify_token = self.facebook_verify_token
             self.pat = self.facebook_pat
             self.pid = self.facebook_pid
-            fb = FacebookHandler(self.pid, self.pat, self.verify_token, self.ozz_guid, self.actions, self.redis_db, self.mongo)
+            fb = FacebookHandler(self.pid, self.pat, self.verify_token, self.ozz_guid, self.actions, self.redis_db, self.mongo, self.log)
             app.add_url_rule('/api/messages/facebook',view_func=fb.verify
             ,methods=['GET'])
             app.add_url_rule('/api/messages/facebook',view_func=fb.respond
@@ -120,12 +123,12 @@ class Wizard(object):
             self.pad = self.slack_pad
             self.verify_token = self.slack_verify_token
             self.bot_token = self.slack_bot_token
-            slack  = SlackHandler(self.pid,self.pad,self.verify_token,self.bot_token,self.ozz_guid,self.actions, self.redis_db, self.mongo)
+            slack  = SlackHandler(self.pid,self.pad,self.verify_token,self.bot_token,self.ozz_guid,self.actions, self.redis_db, self.mongo, self.log)
             #app.add_url_rule('/api/messages/slack',view_func=slack.verify,methods=['GET'])
             app.add_url_rule('/api/messages/slack',view_func=slack.respond,methods=['POST'])
         
         if "telegram" in self.channels:
             self.bot_token = self.token
-            telegram  = TelegramHandler(self.bot_token,self.ozz_guid,self.actions,self.redis_db, self.mongo)
+            telegram  = TelegramHandler(self.bot_token,self.ozz_guid,self.actions,self.redis_db, self.mongo, self.log)
             app.add_url_rule('/api/messages/telegram',view_func=telegram.responds,methods = ['POST'])
     

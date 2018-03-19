@@ -11,8 +11,6 @@ import random
 from flask import request
 from actions import *
 
-from .ozz import OzzParser
-
 class FacebookHandler(object):
     """
         The facebook handler acts as the interface to handle all requests coming 
@@ -20,13 +18,14 @@ class FacebookHandler(object):
 
         It parses the payload and responds
     """
-    def __init__(self, pid, pat, verify_token, ozz_guid, actions, redis_db, mongo):
+    def __init__(self, pid, pat, verify_token, ozz_guid, actions, redis_db, mongo, log):
         self.pid = pid
         self.pat = pat
         self.verify_token = verify_token
         self.ozz_guid = ozz_guid
         self.redis_db = redis_db
         self.mongo = mongo
+        self.log = log
         with open(actions,"r") as jsonFile:
             self.actions = json.load(jsonFile)
         if ozz_guid != "":
@@ -73,10 +72,23 @@ class FacebookHandler(object):
                     }
 
                     response = requests.request("POST", url, data=payload, headers=headers, verify=False)
-                if self.nlu:
-                    intent, entities, response = self.nlu.parse(message)
+                if self.api:
+                    r = self.api.text_request()
+                    r.session_id = uuid.uuid4().hex
+                    r.query = message
+
+                    res = r.getresponse()
+                    res = json.loads(res.read().decode('utf-8'))
+
+                    intent = res["result"]["action"]
+                    if intent == '':
+                        intent = res["result"]["metadata"]["intentName"]
+                    response = res["result"]["fulfillment"]["speech"]
+                    entities = res["result"]['parameters']
+
                     session['intent'] = intent
                     session['entities'] = entities
+                    
                     if intent in self.actions:
                         if type(self.actions[intent]) == list:
                             response = random.choice(self.actions[intent])

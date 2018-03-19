@@ -1,0 +1,34 @@
+{
+  "name": "flask-wizard",
+  "version": "1.0.0",
+  "description": "The react based frontend for flask",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "build": "webpack",
+    "start": "wiz run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ozzai/wizard.git"
+  },
+  "author": "Akshay Kulkarni",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ozzai/wizard/issues"
+  },
+  "homepage": "https://github.com/ozzai/wizard#readme",
+  "dependencies": {
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.4.5",
+    "babel-loader": "^6.2.1",
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-react": "^6.3.13",
+    "webpack": "^1.12.12"
+  }
+}

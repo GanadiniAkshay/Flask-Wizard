@@ -9,9 +9,7 @@ def find_course(session):
     response.send(session,"lol")
 
 def find_profession(session):
-    print(session["mongo"])
     response.send(session,"looool")
 
 def trend(session):
-    print(session)
     return {"message":"trendify","type":"text"}

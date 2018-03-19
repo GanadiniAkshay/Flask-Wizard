@@ -178,7 +178,7 @@ class quick_reply(object):
 def send(session,response):
     channel = session["channel"]
     if channel == 'web':
-        return str(response)
+        return {"message":str(response),"type":"text"}
     if channel == 'facebook':
         config = os.path.join(os.getcwd(),'config.json')
         with open(config,"r") as jsonFile:

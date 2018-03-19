@@ -1,4 +1,3 @@
 {
-    "get_aqi_trend": "courses.trend",
-    "default_action": "courses.trend"
+    "get_aqi_trend": "courses.trend"
 }

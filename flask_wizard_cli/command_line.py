@@ -100,7 +100,7 @@ def init(arguments):
         mainFile.write("wizard = Wizard(application)\n")
         mainFile.write("\n")
         mainFile.write("if __name__ == '__main__':\n")
-        mainFile.write("\tapplication.run()")
+        mainFile.write("\tapplication.run(host='0.0.0.0')")
 
     #Setup config.json file
     print("Creating config.json....")

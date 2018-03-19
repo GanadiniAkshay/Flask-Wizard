@@ -12,8 +12,6 @@ from slackclient import SlackClient
 from flask import request, jsonify
 from actions import *
 
-from .ozz import OzzParser
-
 class SlackHandler(object):
     """
         The facebook handler acts as the interface to handle all requests coming 
@@ -21,9 +19,10 @@ class SlackHandler(object):
 
         It parses the payload and responds
     """
-    def __init__(self, pid, pad , verify_token,bot_token, ozz_guid, actions, redis_db, mongo):
+    def __init__(self, pid, pad , verify_token,bot_token, ozz_guid, actions, redis_db, mongo, log):
         self.redis_db = redis_db
         self.mongo = mongo
+        self.log = log
         self.sc = SlackClient(bot_token) 
         self.pid = pid  
         self.pad = pad
@@ -32,9 +31,8 @@ class SlackHandler(object):
         with open(actions,"r") as jsonFile:
             self.actions = json.load(jsonFile)
         if ozz_guid != "":
-            self.nlu = OzzParser(ozz_guid)
-        else:
-            self.nlu = None
+            if ozz_guid[:4] == 'api_':
+                self.api = apiai.ApiAI(ozz_guid[4:])
         print("Slack endpoint - /api/messages/slack")
 
     def respond(self,*args,**kwargs):
@@ -51,8 +49,20 @@ class SlackHandler(object):
                     print (data["event"])
                     if 'subtype' not in data["event"]:
                         id = data["event"]["channel"]
-                        if self.nlu:
-                            intent, entities, response = self.nlu.parse(message)
+                        if self.api:
+                            r = self.api.text_request()
+                            r.session_id = uuid.uuid4().hex
+                            r.query = message
+
+                            res = r.getresponse()
+                            res = json.loads(res.read().decode('utf-8'))
+
+                            intent = res["result"]["action"]
+                            if intent == '':
+                                intent = res["result"]["metadata"]["intentName"]
+                            response = res["result"]["fulfillment"]["speech"]
+                            entities = res["result"]['parameters']
+                            
                             if intent in self.actions:   
                                 if type(self.actions[intent]) == list:
                                     response = random.choice(self.actions[intent])

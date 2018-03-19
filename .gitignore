@@ -4,6 +4,7 @@ models/
 *.egg-info
 flask_wizard/__pycache__/
 flask_wizard_cli/__pycache__/
+node_modules/
 dist/
 build/
 wiza/
