@@ -1,6 +1,7 @@
 train/
 __pycache__/
 models/
+.vscode/
 *.egg-info
 flask_wizard/__pycache__/
 flask_wizard_cli/__pycache__/

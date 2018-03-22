@@ -27,7 +27,7 @@ Flask-Wizard:
 
 .. toctree::
    :maxdepth: 2
-   :caption: Getting Started:
+   :caption: Getting Started
 
    started
    tutorial
