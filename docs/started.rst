@@ -1,18 +1,15 @@
-Getting Started
-===============
-
 Installation
-^^^^^^^^^^^^
+============
 
 Flask wizard can be installed using pip:
 
-.. code-block:: none
+.. code-block:: console
 
    $ pip install flask-wizard
 
 Once the library is installed you can create a project by using the command inside the project directory:
 
-.. code-block:: none   
+.. code-block:: console   
    
    $ mkdir flask_bot
    $ cd flask_bot
@@ -25,6 +22,3 @@ Once the library is installed you can create a project by using the command insi
    $ Creating config.json...
 
 The above init command initializes the directory sturcture and sets up our bot.
-
-Tutorial: A basic weather bot
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
