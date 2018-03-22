@@ -9,3 +9,4 @@ pyparsing==2.2.0
 six==1.10.0
 Werkzeug==0.12.1
 redis==2.10.5
+sphinx-rtd-theme==0.2.4
