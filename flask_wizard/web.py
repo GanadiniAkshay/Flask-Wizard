@@ -105,7 +105,7 @@ class HttpHandler(object):
                 response = {"message":str(message),"type":"text"}
             end = timer()
             runtime = str(end - start)
-            log_object = {"message":message,"intent":intent,"entities":entities,"action":action,"response":response,"runtime":runtime,"time":time.time()}
+            log_object = {"message":message,"intent":intent,"entities":entities,"action":action,"response":str(response),"runtime":runtime,"time":str(time.time())}
             self.mongo.db.logs.insert_one(log_object)
             return jsonify(response)
             

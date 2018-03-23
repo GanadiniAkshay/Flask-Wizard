@@ -108,10 +108,11 @@ def init(arguments):
     with open(file_path, "w") as jsonFile:
         data = {}
         data["name"] = bot_name
+        data["config_route"] = "/"
         data["channels"] = {}
-        data["ozz_guid"] = ""
+        data["nlp"] = {"name":"","key":""}
         data["redis"] = {"host":"","port":"","password":""}
-        data["mongo"] = {"mongo_uri":""}
+        data["mongo"] = {"mongo_uri":"",log:True}
         json.dump(data, jsonFile, indent=2)
 
 def run(arguments):
