@@ -8,6 +8,8 @@ import base64
 import sys
 import random
 
+from timeit import default_timer as timer
+
 from flask import request
 from actions import *
 
@@ -45,6 +47,10 @@ class FacebookHandler(object):
         for sender, message in self.messaging_events(payload):
             if sender != self.pid:
                 if type(message) != str:
+                    start = timer()
+                    intent=None
+                    entities=None
+                    action=None
                     message = message.decode('utf-8')
                     r = requests.get("https://graph.facebook.com/v2.6/"+ sender + "?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=" + self.pat)
                     r_data = json.loads(r.text)
@@ -90,6 +96,7 @@ class FacebookHandler(object):
                     session['entities'] = entities
                     
                     if intent in self.actions:
+                        action = self.actions[intent]
                         if type(self.actions[intent]) == list:
                             response = random.choice(self.actions[intent])
                             self.send_message(self.pat,sender,response)
@@ -101,6 +108,11 @@ class FacebookHandler(object):
                 else:
                     self.send_message(self.pat, sender, message)
                 
+                end = timer()
+                runtime = str(end - start)
+                log_object = {"message":message,"channel":"facebook","intent":intent,"entities":entities,"action":action,"response":str(response),"runtime":runtime,"time":str(time.time())}
+                self.mongo.db.logs.insert_one(log_object)
+
                 payload_data = {"message":response,"bot_guid":self.ozz_guid,"url":"ozz.ai","pat":self.pat,"pid":self.pid,"user_data":session['user'],"source":"facebook","is_human":0}
                 payload = json.dumps(payload_data)
 

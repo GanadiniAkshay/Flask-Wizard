@@ -9,6 +9,8 @@ import sys
 import random
 from slackclient import SlackClient
 
+from timeit import default_timer as timer
+
 from flask import request, jsonify
 from actions import *
 
@@ -46,6 +48,10 @@ class SlackHandler(object):
             if "event" in  data:
                 if "message" == data["event"]['type']:
                     message = data["event"]["text"]
+                    start = timer()
+                    intent=None
+                    entities=None
+                    action=None
                     print (data["event"])
                     if 'subtype' not in data["event"]:
                         id = data["event"]["channel"]
@@ -81,8 +87,16 @@ class SlackHandler(object):
                                     self.send_message(id, message)
                                     #func(session)
                             elif response != "":
+                                end = timer()
+                                runtime = str(end - start)
+                                log_object = {"message":message,"channel":"slack","intent":intent,"entities":entities,"action":action,"response":str(response),"runtime":runtime,"time":str(time.time())}
+                                self.mongo.db.logs.insert_one(log_object)
                                 self.send_message(id,response)
                         else:
+                             end = timer()
+                             runtime = str(end - start)
+                             log_object = {"message":message,"channel":"slack","intent":intent,"entities":entities,"action":action,"response":str(message),"runtime":runtime,"time":str(time.time())}
+                             self.mongo.db.logs.insert_one(log_object)
                              self.send_message(id, message)
             return "Responded!"  
         else:

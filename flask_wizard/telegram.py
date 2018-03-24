@@ -11,6 +11,8 @@ import telepot
 import ast
 import pprint
 
+from timeit import default_timer as timer
+
 from flask import request
 from actions import *
 
@@ -47,6 +49,10 @@ class TelegramHandler(object):
                 frm = data["message"]["from"]
                 message = data["message"]["text"]
                 IdOfSender = frm["id"]
+                start = timer()
+                intent=None
+                entities=None
+                action=None
                 if self.api:
                     r = self.api.text_request()
                     r.session_id = uuid.uuid4().hex
@@ -78,8 +84,16 @@ class TelegramHandler(object):
                                 message = eval(self.actions[intent])
                                 self.send_message(IdOfSender, message)
                     elif response != "":
+                        end = timer()
+                        runtime = str(end - start)
+                        log_object = {"message":message,"channel":"telegram","intent":intent,"entities":entities,"action":action,"response":str(response),"runtime":runtime,"time":str(time.time())}
+                        self.mongo.db.logs.insert_one(log_object)
                         self.send_message(IdOfSender, response)                
                 else:
+                    end = timer()
+                    runtime = str(end - start)
+                    log_object = {"message":message,"channel":"telegram","intent":intent,"entities":entities,"action":action,"response":str(message),"runtime":runtime,"time":str(time.time())}
+                    self.mongo.db.logs.insert_one(log_object)
                     self.send_message(IdOfSender, message)
         return 'Responded!'
         

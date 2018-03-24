@@ -42,6 +42,8 @@ class HttpHandler(object):
         payload = payload.decode('utf-8')
         data = json.loads(payload)
         message = data["message"]
+        intent  = None
+        entities = None
         if "user_name" in data:
             user_name = data['user_name']
         else:
@@ -105,11 +107,13 @@ class HttpHandler(object):
                 response = {"message":str(message),"type":"text"}
             end = timer()
             runtime = str(end - start)
-            log_object = {"message":message,"intent":intent,"entities":entities,"action":action,"response":str(response),"runtime":runtime,"time":str(time.time())}
+            log_object = {"message":message,"channel":"web","intent":intent,"entities":entities,"action":action,"response":str(response),"runtime":runtime,"time":str(time.time())}
             self.mongo.db.logs.insert_one(log_object)
             return jsonify(response)
             
         else:
             end = timer()
             runtime = str(end - start)
+            log_object = {"message":message,"channel":"web","intent":intent,"entities":entities,"action":action,"response":str(message),"runtime":runtime,"time":str(time.time())}
+            self.mongo.db.logs.insert_one(log_object)
             return str(message)
