@@ -112,7 +112,7 @@ def init(arguments):
         data["channels"] = {}
         data["nlp"] = {"name":"","key":""}
         data["redis"] = {"host":"","port":"","password":""}
-        data["mongo"] = {"mongo_uri":"",log:True}
+        data["mongo"] = {"mongo_uri":"","log":True}
         json.dump(data, jsonFile, indent=2)
 
 def run(arguments):

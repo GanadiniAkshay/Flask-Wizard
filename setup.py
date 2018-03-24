@@ -10,11 +10,11 @@ from setuptools import setup
 
 setup(
     name='Flask-Wizard',
-    version='0.5.23',
+    version='0.5.24',
     url='https://github.com/ozzai/flask-wizard',
     license='Apache 2.0',
     author='Akshay Kulkarni',
-    author_email='akshay@ozz.ai',
+    author_email='akshaykulkarni.2104@gmail.com',
     description='Rapid and easy chatbot development in Python for multiple channels',
     long_description=__doc__,
     packages=['flask_wizard_cli','flask_wizard'],

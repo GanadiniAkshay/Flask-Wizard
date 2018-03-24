@@ -8,8 +8,11 @@ import base64
 import sys
 import random
 import telepot
+import uuid
+import apiai
 import ast
 import pprint
+import time
 
 from timeit import default_timer as timer
 

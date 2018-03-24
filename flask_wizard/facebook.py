@@ -3,10 +3,13 @@ from __future__ import print_function
 
 import os
 import json
+import apiai
 import requests
 import base64
 import sys
 import random
+import uuid
+import time
 
 from timeit import default_timer as timer
 
@@ -31,9 +34,8 @@ class FacebookHandler(object):
         with open(actions,"r") as jsonFile:
             self.actions = json.load(jsonFile)
         if ozz_guid != "":
-            self.nlu = OzzParser(ozz_guid)
-        else:
-            self.nlu = None
+            if ozz_guid[:4] == 'api_':
+                self.api = apiai.ApiAI(ozz_guid[4:])
         print("Messenger endpoint - /api/messages/facebook")
 
     def verify(self,*args,**kwargs):
@@ -67,17 +69,6 @@ class FacebookHandler(object):
                     session['mongo'] = self.mongo
                     session['message'] = message
                     session['channel'] = 'facebook' 
-                    url = "https://ozz.ai/api/logs"
-
-                    payload_data = {"message":message,"bot_guid":self.ozz_guid,"url":"ozz.ai","pat":self.pat,"pid":self.pid,"user_data":session['user'],"source":"facebook","is_human":1}
-                    payload = json.dumps(payload_data)
-
-                    headers = {
-                        'content-type': "application/json",
-                        'cache-control': "no-cache"
-                    }
-
-                    response = requests.request("POST", url, data=payload, headers=headers, verify=False)
                 if self.api:
                     r = self.api.text_request()
                     r.session_id = uuid.uuid4().hex
@@ -118,15 +109,6 @@ class FacebookHandler(object):
                         self.mongo.db.logs.insert_one(log_object)
                     self.send_message(self.pat, sender, message)
 
-                payload_data = {"message":response,"bot_guid":self.ozz_guid,"url":"ozz.ai","pat":self.pat,"pid":self.pid,"user_data":session['user'],"source":"facebook","is_human":0}
-                payload = json.dumps(payload_data)
-
-                headers = {
-                    'content-type': "application/json",
-                    'cache-control': "no-cache"
-                }
-
-                response = requests.request("POST", url, data=payload, headers=headers, verify=False)
         return "responded"
 
     def messaging_events(self, payload):

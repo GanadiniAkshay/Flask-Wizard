@@ -6,7 +6,10 @@ import json
 import requests
 import base64
 import sys
+import apiai
+import uuid
 import random
+import time
 from slackclient import SlackClient
 
 from timeit import default_timer as timer

@@ -61,8 +61,7 @@ class HttpHandler(object):
                 intent = res["result"]["metadata"]["intentName"]
             response = res["result"]["fulfillment"]["speech"]
             entities = res["result"]['parameters']
-
-
+            
             if intent in self.actions:
                 if type(self.actions[intent]) == list:
                     response = random.choice(self.actions[intent])
@@ -104,7 +103,10 @@ class HttpHandler(object):
                 intent = 'No NLP'
                 entities = 'No NLP'
                 action = 'No NLP'
-                response = {"message":str(message),"type":"text"}
+                if response:
+                    response = {"message":str(response),"type":"text"}
+                else:
+                    response = {"message":str(message),"type":"text"}
             end = timer()
             runtime = str(end - start)
             if self.mongo:
