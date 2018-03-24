@@ -1,5 +1,5 @@
-# wizard
-A simple python framework to build multi channel bots. The framework supports wit.ai, api.ai and has inbuilt support for rasa.ai
+# Flask-Wizard
+A flask extension to build multi channel chatbbots. The framework supports wit.ai, dialogflow and Luis as the NLP backend and can be used to publish bots to web, facebook, telegram and slack.
 
 ### Getting Started
 
