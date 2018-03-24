@@ -3,7 +3,7 @@
     "config_route":"/", 
     "nlp":{
         "name": "dialogflow",
-        "key": ""
+        "key": "56a8b1ecaf6541b0ba41933e0d0e1a92"
     },
     "channels": {
     }, 

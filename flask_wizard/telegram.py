@@ -86,14 +86,16 @@ class TelegramHandler(object):
                     elif response != "":
                         end = timer()
                         runtime = str(end - start)
-                        log_object = {"message":message,"channel":"telegram","intent":intent,"entities":entities,"action":action,"response":str(response),"runtime":runtime,"time":str(time.time())}
-                        self.mongo.db.logs.insert_one(log_object)
+                        if self.mongo:
+                            log_object = {"message":message,"channel":"telegram","intent":intent,"entities":entities,"action":action,"response":str(response),"runtime":runtime,"time":str(time.time())}
+                            self.mongo.db.logs.insert_one(log_object)
                         self.send_message(IdOfSender, response)                
                 else:
                     end = timer()
                     runtime = str(end - start)
-                    log_object = {"message":message,"channel":"telegram","intent":intent,"entities":entities,"action":action,"response":str(message),"runtime":runtime,"time":str(time.time())}
-                    self.mongo.db.logs.insert_one(log_object)
+                    if self.mongo:
+                        log_object = {"message":message,"channel":"telegram","intent":intent,"entities":entities,"action":action,"response":str(message),"runtime":runtime,"time":str(time.time())}
+                        self.mongo.db.logs.insert_one(log_object)
                     self.send_message(IdOfSender, message)
         return 'Responded!'
         

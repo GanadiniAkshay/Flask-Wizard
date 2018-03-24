@@ -107,13 +107,15 @@ class HttpHandler(object):
                 response = {"message":str(message),"type":"text"}
             end = timer()
             runtime = str(end - start)
-            log_object = {"message":message,"channel":"web","intent":intent,"entities":entities,"action":action,"response":str(response),"runtime":runtime,"time":str(time.time())}
-            self.mongo.db.logs.insert_one(log_object)
+            if self.mongo:
+                log_object = {"message":message,"channel":"web","intent":intent,"entities":entities,"action":action,"response":str(response),"runtime":runtime,"time":str(time.time())}
+                self.mongo.db.logs.insert_one(log_object)
             return jsonify(response)
             
         else:
             end = timer()
             runtime = str(end - start)
-            log_object = {"message":message,"channel":"web","intent":intent,"entities":entities,"action":action,"response":str(message),"runtime":runtime,"time":str(time.time())}
-            self.mongo.db.logs.insert_one(log_object)
+            if self.mongo:
+                log_object = {"message":message,"channel":"web","intent":intent,"entities":entities,"action":action,"response":str(message),"runtime":runtime,"time":str(time.time())}
+                self.mongo.db.logs.insert_one(log_object)
             return str(message)

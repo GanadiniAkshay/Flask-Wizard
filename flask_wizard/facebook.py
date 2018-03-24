@@ -104,14 +104,19 @@ class FacebookHandler(object):
                             func = eval(self.actions[intent])
                             func(session)
                     elif response != "":
+                        end = timer()
+                        runtime = str(end - start)
+                        if self.mongo:
+                            log_object = {"message":message,"channel":"facebook","intent":intent,"entities":entities,"action":action,"response":str(response),"runtime":runtime,"time":str(time.time())}
+                            self.mongo.db.logs.insert_one(log_object)
                         self.send_message(self.pat, sender, response)
                 else:
+                    end = timer()
+                    runtime = str(end - start)
+                    if self.mongo:
+                        log_object = {"message":message,"channel":"facebook","intent":intent,"entities":entities,"action":action,"response":str(message),"runtime":runtime,"time":str(time.time())}
+                        self.mongo.db.logs.insert_one(log_object)
                     self.send_message(self.pat, sender, message)
-                
-                end = timer()
-                runtime = str(end - start)
-                log_object = {"message":message,"channel":"facebook","intent":intent,"entities":entities,"action":action,"response":str(response),"runtime":runtime,"time":str(time.time())}
-                self.mongo.db.logs.insert_one(log_object)
 
                 payload_data = {"message":response,"bot_guid":self.ozz_guid,"url":"ozz.ai","pat":self.pat,"pid":self.pid,"user_data":session['user'],"source":"facebook","is_human":0}
                 payload = json.dumps(payload_data)
