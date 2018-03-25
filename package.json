@@ -7,6 +7,7 @@
     "doc": "docs"
   },
   "scripts": {
+    "dev": "webpack --watch",
     "build": "webpack",
     "start": "wiz run"
   },
@@ -21,6 +22,7 @@
   },
   "homepage": "https://github.com/ozzai/wizard#readme",
   "dependencies": {
+    "axios": "^0.18.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0"
   },

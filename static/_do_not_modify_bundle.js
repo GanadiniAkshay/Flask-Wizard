@@ -59,13 +59,13 @@
 
 	var _reactDom = __webpack_require__(13);
 
-	var _Hello = __webpack_require__(28);
+	var _Config = __webpack_require__(28);
 
-	var _Hello2 = _interopRequireDefault(_Hello);
+	var _Config2 = _interopRequireDefault(_Config);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	(0, _reactDom.render)(_react2.default.createElement(_Hello2.default, null), document.getElementById('react'));
+	(0, _reactDom.render)(_react2.default.createElement(_Config2.default, null), document.getElementById('react'));
 
 /***/ }),
 /* 2 */
@@ -18224,7 +18224,7 @@
 /* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	'use strict';
+	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
@@ -18244,33 +18244,78 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var Hello = function (_React$Component) {
-	    _inherits(Hello, _React$Component);
+	var Config = function (_React$Component) {
+	    _inherits(Config, _React$Component);
 
-	    function Hello(props) {
-	        _classCallCheck(this, Hello);
+	    function Config(props) {
+	        _classCallCheck(this, Config);
 
-	        var _this = _possibleConstructorReturn(this, (Hello.__proto__ || Object.getPrototypeOf(Hello)).call(this, props));
+	        var _this = _possibleConstructorReturn(this, (Config.__proto__ || Object.getPrototypeOf(Config)).call(this, props));
 
 	        _this.state = {};
 	        return _this;
 	    }
 
-	    _createClass(Hello, [{
-	        key: 'render',
+	    _createClass(Config, [{
+	        key: "render",
 	        value: function render() {
 	            return _react2.default.createElement(
-	                'h1',
-	                null,
-	                'Hello, world'
+	                "div",
+	                { className: "fluid-container", style: { "height": "100%" } },
+	                _react2.default.createElement(
+	                    "nav",
+	                    { style: { "backgroundColor": "#7A7A7A" } },
+	                    _react2.default.createElement(
+	                        "div",
+	                        { className: "nav-wrapper" },
+	                        _react2.default.createElement(
+	                            "a",
+	                            { href: "#", className: "brand-logo", style: { "marginLeft": "10px" } },
+	                            "Flask-Wizard"
+	                        ),
+	                        _react2.default.createElement(
+	                            "ul",
+	                            { id: "nav-mobile", className: "right hide-on-med-and-down" },
+	                            _react2.default.createElement(
+	                                "li",
+	                                { className: "active" },
+	                                _react2.default.createElement(
+	                                    "a",
+	                                    { href: "#" },
+	                                    "Home"
+	                                )
+	                            ),
+	                            _react2.default.createElement(
+	                                "li",
+	                                null,
+	                                _react2.default.createElement(
+	                                    "a",
+	                                    { target: "_blank", href: "http://flask-wizard.readthedocs.io/en/latest/", className: "waves-effect waves-light btn", style: { "color": "black", "backgroundColor": "white" } },
+	                                    "Docs"
+	                                )
+	                            )
+	                        )
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    "div",
+	                    { className: "row", style: { "height": "100%" } },
+	                    _react2.default.createElement(
+	                        "div",
+	                        { className: "col s9", style: { "height": "100%" } },
+	                        _react2.default.createElement("div", { className: "row", style: { "backgroundColor": "red", "height": "30%", "marginBottom": "0" } }),
+	                        _react2.default.createElement("div", { className: "row", style: { "backgroundColor": "green", "height": "70%" } })
+	                    ),
+	                    _react2.default.createElement("div", { className: "col s3", style: { "backgroundColor": "blue", "height": "100%" } })
+	                )
 	            );
 	        }
 	    }]);
 
-	    return Hello;
+	    return Config;
 	}(_react2.default.Component);
 
-	exports.default = Hello;
+	exports.default = Config;
 
 /***/ })
 /******/ ]);

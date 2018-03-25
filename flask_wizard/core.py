@@ -104,7 +104,10 @@ class Wizard(object):
         configuration = ConfigHandler(config_route)
         app.add_url_rule(config_route,view_func=configuration.render,methods=['GET'])
 
-        # web initializaion
+        #config json api
+        app.add_url_rule('/api/config',view_func=configuration.modconfig, methods=['GET','POST'])
+
+        #web initializaion
         web = HttpHandler(self.config, self.actions, self.ozz_guid, self.redis_db, self.mongo, self.log)
         app.add_url_rule('/api/messages/http',view_func=web.response,methods=["POST"])
 
@@ -118,6 +121,8 @@ class Wizard(object):
             ,methods=['GET'])
             app.add_url_rule('/api/messages/facebook',view_func=fb.respond
             ,methods=['POST'])
+        
+        #slack initialization
         if "slack" in self.channels:
             self.pid = self.slack_pid
             self.pad = self.slack_pad
@@ -127,6 +132,7 @@ class Wizard(object):
             #app.add_url_rule('/api/messages/slack',view_func=slack.verify,methods=['GET'])
             app.add_url_rule('/api/messages/slack',view_func=slack.respond,methods=['POST'])
         
+        #telegram initialization
         if "telegram" in self.channels:
             self.bot_token = self.token
             telegram  = TelegramHandler(self.bot_token,self.ozz_guid,self.actions,self.redis_db, self.mongo, self.log)

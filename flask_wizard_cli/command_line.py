@@ -54,21 +54,39 @@ def build(arguments):
     file.close()
 
 def init(arguments):
-    #Setup bot name
-    main_name = os.getcwd().split(os.sep)[-1]
-    if len(arguments) < 3:
-        prompt = "Name of the bot (default: " + main_name + "):"
-        bot_name = str(input(prompt))
-        if len(bot_name) == 0:
-            bot_name = main_name
-    else:
-        bot_name = ' '.join(arguments[2:])
 
-    #Setup Author Name
-    prompt = "Name of the author:"
-    user_name = str(input(prompt))
-    if len(user_name) == 0:
-        user_name = "wizard_user"
+    config_file = os.path.join(os.getcwd(),'config.json')
+    if not os.path.exists(config_file):
+        #Setup bot name
+        main_name = os.getcwd().split(os.sep)[-1]
+        if len(arguments) < 3:
+            prompt = "Name of the bot (default: " + main_name + "):"
+            bot_name = str(input(prompt))
+            if len(bot_name) == 0:
+                bot_name = main_name
+        else:
+            bot_name = ' '.join(arguments[2:])
+
+        #Setup Author Name
+        prompt = "Name of the author:"
+        user_name = str(input(prompt))
+        if len(user_name) == 0:
+            user_name = "wizard_user"
+
+        #Setup config.json file
+        print("Creating config.json...")
+        file_path = os.path.join(os.getcwd(),'config.json')
+        with open(file_path, "w") as jsonFile:
+            data = {}
+            data["name"] = bot_name
+            data["config_route"] = "/"
+            data["channels"] = {}
+            data["nlp"] = {"name":"","key":""}
+            data["redis"] = {"host":"","port":"","password":""}
+            data["mongo"] = {"mongo_uri":"","log":True}
+            json.dump(data, jsonFile, indent=2)
+
+    
 
     #Setup templates folder
     print("Creating templates folder...")
@@ -121,19 +139,6 @@ def init(arguments):
         mainFile.write("\n")
         mainFile.write("if __name__ == '__main__':\n")
         mainFile.write("\tapplication.run(host='0.0.0.0')")
-
-    #Setup config.json file
-    print("Creating config.json...")
-    file_path = os.path.join(os.getcwd(),'config.json')
-    with open(file_path, "w") as jsonFile:
-        data = {}
-        data["name"] = bot_name
-        data["config_route"] = "/"
-        data["channels"] = {}
-        data["nlp"] = {"name":"","key":""}
-        data["redis"] = {"host":"","port":"","password":""}
-        data["mongo"] = {"mongo_uri":"","log":True}
-        json.dump(data, jsonFile, indent=2)
 
 def run(arguments):
     main_path = os.path.join(os.getcwd(),'application.py')

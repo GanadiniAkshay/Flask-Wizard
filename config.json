@@ -1,19 +1,18 @@
 {
-    "name": "test",
-    "config_route":"/", 
-    "nlp":{
-        "name": "dialogflow",
-        "key": ""
-    },
-    "channels": {
-    }, 
-    "redis":{
-        "host":"",
-        "port":"",
-        "password":""
-    },
-    "mongo":{
-        "mongo_uri":"",
-        "log":true
-    }
+  "channels": {},
+  "config_route": "/",
+  "mongo": {
+    "log": true,
+    "mongo_uri": ""
+  },
+  "name": "test change",
+  "nlp": {
+    "key": "",
+    "name": "dialogflow"
+  },
+  "redis": {
+    "host": "",
+    "password": "",
+    "port": ""
+  }
 }

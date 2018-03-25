@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from 'react-dom';
 
-import Hello from './Hello';
+import Config from './Config/Config';
 
-render(<Hello/>,document.getElementById('react'));
+render(<Config/>,document.getElementById('react'));
