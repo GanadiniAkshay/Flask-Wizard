@@ -5,7 +5,7 @@ module.exports = {
   ],
   output: {
     path: __dirname + '/static',
-    filename: "bundle.js"
+    filename: "_do_not_modify_bundle.js"
   },
   module: {
     loaders: [

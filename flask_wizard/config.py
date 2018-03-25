@@ -16,4 +16,4 @@ class ConfigHandler(object):
         print("Config page setup at - " + route)
 
     def render(self):
-        return render_template('index.html')
+        return render_template('_do_not_modify_config.html')

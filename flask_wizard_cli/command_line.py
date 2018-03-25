@@ -70,14 +70,34 @@ def init(arguments):
     if len(user_name) == 0:
         user_name = "wizard_user"
 
+    #Setup templates folder
+    print("Creating templates folder...")
+    directory = os.path.join(os.getcwd(),'templates')
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    #Download config.html
+    print("Downloading config.html...")
+    wget.download("https://raw.githubusercontent.com/GanadiniAkshay/Flask-Wizard/master/templates/_do_not_modify_config.html","./templates/")
+
+    #Setup static folder
+    print("Creating static folder...")
+    directory = os.path.join(os.getcwd(),'static')
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    #Download config.html
+    print("Downloading bundle.js...")
+    wget.download("https://raw.githubusercontent.com/GanadiniAkshay/Flask-Wizard/master/static/_do_not_modify_bundle.js","./static/")
+
     #Setup actions folder
-    print("Creating actions folder....")
+    print("Creating actions folder...")
     directory = os.path.join(os.getcwd(),'actions')
     if not os.path.exists(directory):
         os.makedirs(directory)
 
     #Configure actions folder
-    print("Configuring actions folder....")
+    print("Configuring actions folder...")
     directory = os.path.join(os.getcwd(),'actions')
     with open(os.path.join(directory,'__init__.py'), "w") as initFile:
         initFile.write("#It will be initialized at runtime")
@@ -103,7 +123,7 @@ def init(arguments):
         mainFile.write("\tapplication.run(host='0.0.0.0')")
 
     #Setup config.json file
-    print("Creating config.json....")
+    print("Creating config.json...")
     file_path = os.path.join(os.getcwd(),'config.json')
     with open(file_path, "w") as jsonFile:
         data = {}
