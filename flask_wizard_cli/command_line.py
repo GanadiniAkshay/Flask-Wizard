@@ -79,6 +79,7 @@ def init(arguments):
         with open(file_path, "w") as jsonFile:
             data = {}
             data["name"] = bot_name
+            data["author"] = user_name
             data["config_route"] = "/"
             data["channels"] = {}
             data["nlp"] = {"name":"","key":""}

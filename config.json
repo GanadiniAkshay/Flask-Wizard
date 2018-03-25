@@ -1,11 +1,8 @@
 {
-  "channels": {},
+  "name": "testing",
+  "author": "Akshay Kulkarni",
   "config_route": "/",
-  "mongo": {
-    "log": true,
-    "mongo_uri": ""
-  },
-  "name": "test change",
+  "channels": {},
   "nlp": {
     "key": "",
     "name": "dialogflow"
@@ -14,5 +11,9 @@
     "host": "",
     "password": "",
     "port": ""
+  },
+  "mongo": {
+    "log": true,
+    "mongo_uri": ""
   }
 }
