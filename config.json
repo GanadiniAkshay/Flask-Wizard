@@ -1,16 +1,23 @@
 {
-  "name": "testing",
+  "name": "pramoja",
   "author": "Akshay Kulkarni",
+  "frontend":"https://10f0ced3.ngrok.io",
   "config_route": "/",
-  "channels": {},
+  "channels": {
+    "facebook": {
+      "pat": "EAAZAX8zjKu3kBAHM5tYuMDXHbU8jSFqTvTnOYhoQ0uGxriig9T1gPPnghunPXKTQyXQ2LTbntiBeitouFzpPy6UB0inEXUS52mUqT6wYoxrPP6i0hz69ZBkdIJDj9buzUdnP4CH0YHHauN24ZBiZCXIWPyVSM3yJ0iZB0KEyJ7QZDZD",
+      "pid": "361093794245516",
+      "verify_token": "this_is_a_test"
+    }
+  },
   "nlp": {
-    "key": "",
+    "key": "56a8b1ecaf6541b0ba41933e0d0e1a92",
     "name": "dialogflow"
   },
   "redis": {
-    "host": "",
-    "password": "",
-    "port": ""
+    "host": "pramojasafari.redis.cache.windows.net",
+    "password": "NY/ODnnpkOjOlbiKtJ6HxH8z1LQqEhXbzkB/EOWUtvY=",
+    "port": "6379"
   },
   "mongo": {
     "log": true,

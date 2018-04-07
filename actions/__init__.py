@@ -1,1 +1,1 @@
-__all__ = ['courses']
+__all__ = ['link_account', 'courses']

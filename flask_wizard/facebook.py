@@ -85,6 +85,8 @@ class FacebookHandler(object):
 
                     session['intent'] = intent
                     session['entities'] = entities
+
+                    print(intent)
                     
                     if intent in self.actions:
                         action = self.actions[intent]

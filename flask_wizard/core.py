@@ -53,8 +53,8 @@ class Wizard(object):
         :param app: The Flask application object.
         '''
         with open(self.config,"r") as jsonFile:
-            self.redis_db = ""
-            self.mongo = ""
+            self.redis_db = None
+            self.mongo = None
             self.log = False
             data = json.load(jsonFile)
             if "redis" in data.keys():
